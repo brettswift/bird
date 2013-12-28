@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+require "bird/cli"
+
+begin
+  Bird::CLI.start
+rescue Interrupt
+  puts "  Exiting..."
+end
+
