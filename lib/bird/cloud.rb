@@ -9,30 +9,40 @@ class Bird::Cloud < Thor
   default_task :list
 
   # Hack to override the help message produced by Thor.
+  # With PR $387 this causes unexpected behaviour
   # https://github.com/wycats/thor/issues/261#issuecomment-16880836
-  def self.banner(command, namespace = nil, subcommand = 'list')
-    "#{basename} list #{command.usage}"
-  end
+  # def self.banner(command, namespace = nil, subcommand = 'list')
+  #   "#{basename} list #{command.usage}"
+  # end
 
-  desc "list", "list vApps - NOT IMPLEMENTED"
+
+  desc "list", "[--vapp] list restricted to: vApp <name> - NOT IMPLEMENTED"
   option :vapp, :banner => " vApp name"
+  option :vm, :banner => " vm name"
   def list
-    #TODO: implement me
+    say("Sorry buddy, I haven't been imlplemented yet.",:red)
   end
 
-  desc "snapshot", "snapshot something - NOT IMPLEMENTED"
+  desc "search", "<name> - NOT IMPLEMENTED"
+  option :vapp, :banner => " vApp name"
+  option :vm, :banner => " vm name"
+  def search(name)
+    say("Sorry buddy, I haven't been imlplemented yet.",:red)
+  end
+
+  desc "snapshot", "[--vm] snapshot something - NOT IMPLEMENTED"
   def snapshot
-    #TODO: implement me
+    say("Sorry buddy, I haven't been imlplemented yet.",:red)
   end
 
-  desc "restore", "restore something - NOT IMPLEMENTED"
+  desc "restore", "[--vm] restore something - NOT IMPLEMENTED"
   def restore
-    #TODO: implement me
+    say("Sorry buddy, I haven't been imlplemented yet.",:red)
   end
 
-  desc "deploy", "deploy something - NOT IMPLEMENTED"
+  desc "deploy", "[--vm] deploy something - NOT IMPLEMENTED"
   def deploy
-    #TODO: implement me
+    say("Sorry buddy, I haven't been imlplemented yet.",:red)
   end
 
   private
@@ -82,7 +92,7 @@ end
 
 # host = 'https://vcd011no.lab.vim.dcs.mlb.inet'
 # user = 'bswift'
-# pass = 'Pa55w0rd987'
+# pass = 'asdfasdf'
 # org  = 'IDEV7129'
 # api  = '5.1'
 
