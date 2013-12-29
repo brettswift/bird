@@ -1,29 +1,24 @@
-# Bird
+# bird
 
-TODO: Write a gem description
+I am a command line tool to interact with VMWare vCloud Director API and to kick the Puppetlabs Puppet agent. 
 
-## Installation
+I'm intended for development and to facilitate CI and CD workflows only.
+
+The name may change one day.  Creativity isn't my strong suit.  
+
+## Development
 
 Add this line to your application's Gemfile:
-
-    gem 'bird'
-
-And then execute:
-
+    
+    $ git clone
     $ bundle
+    $ bird
 
-Or install it yourself as:
-
-    $ gem install bird
 
 ## Usage
 
-TODO: Write usage instructions here
+    $ bird help
 
 ## Contributing
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+... PR's are welcome!    Fork the bird! 

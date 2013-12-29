@@ -8,12 +8,31 @@ class Bird::Cloud < Thor
 
   default_task :list
 
-  desc "list", "list vms available"
+  # Hack to override the help message produced by Thor.
+  # https://github.com/wycats/thor/issues/261#issuecomment-16880836
+  def self.banner(command, namespace = nil, subcommand = 'list')
+    "#{basename} list #{command.usage}"
+  end
+
+  desc "list", "list vApps - NOT IMPLEMENTED"
+  option :vapp, :banner => " vApp name"
   def list
-    # login
-    # say "hello cloud!"
+    #TODO: implement me
+  end
 
+  desc "snapshot", "snapshot something - NOT IMPLEMENTED"
+  def snapshot
+    #TODO: implement me
+  end
 
+  desc "restore", "restore something - NOT IMPLEMENTED"
+  def restore
+    #TODO: implement me
+  end
+
+  desc "deploy", "deploy something - NOT IMPLEMENTED"
+  def deploy
+    #TODO: implement me
   end
 
   private

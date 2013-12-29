@@ -11,7 +11,7 @@ require 'bird/cloud.rb'
 class Bird::CLI < Thor
   include Bird #includes global config.  todo: move to config module?
 
-  register(Bird::Cloud, :cloud, "cloud", " control your cloud!")
+  register(Bird::Cloud, :cloud, "cloud [help] [list,snapshot,restore,deploy]", " control your cloud!")
 
   desc "setup", "setup configuration variables"
   long_desc <<-LONGDESC
@@ -28,7 +28,6 @@ class Bird::CLI < Thor
         \x5 `bird help cloud`  for a description of how to interact with your VMs. 
 
       LONGDESC
-
       option :vhost, :aliases => :vh, :banner => " vcloud host (omit http)"
       option :vuser, :aliases => :vu, :banner => " vcloud api user"
       option :vpass, :aliases => :vp, :banner => " vcloud password"
