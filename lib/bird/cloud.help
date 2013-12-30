@@ -1,0 +1,32 @@
+NAME
+      bird-cloud - manage your cloud!
+
+SYNOPSIS
+      bird cloud list [--vapp] <vapp name>
+      bird cloud snapshot --vm <vm name>
+      bird cloud deploy   --vm <vm name> 
+      bird cloud restore  --vm <vm name> 
+      bird cloud [COMMAND] -h  #Describe subcommands or one specific subcommand
+
+DESCRIPTION
+       Manage vms in your vCloud, and kick the puppet agent
+
+OPTIONS
+       -vapp
+           Name of the vApp group to filter by.  
+       -vm
+           Name of the vm to control
+
+COMMANDS
+       With no arguments, shows a help file.
+
+       list
+           Lists vApps and their corresponding VM's. 
+
+           With --vapp option,  list is restricted to a VM.
+        snapshot
+            Takes a snapshot of the VM Specified.  (Note: vCloud behaviour only stores one snapshot so the previous snapshot will be destroyed.)
+        restore
+            Discards current state, and restores the VM to an existing snapshot. 
+        deploy
+            Facade commadn to restore a snapshot, and kick the puppet agent. 

@@ -3,8 +3,8 @@ require 'bird'
 require 'user_config'
 require 'vcloud-rest/connection'
 
-
 class Bird::Cloud < Thor
+  include Bird #includes global config.  todo: move to config module?
 
   default_task :list
 
@@ -20,32 +20,86 @@ class Bird::Cloud < Thor
   option :vapp, :banner => " vApp name"
   option :vm, :banner => " vm name"
   def list
-    say("Sorry buddy, I haven't been imlplemented yet.",:red)
+    error("Sorry buddy, I haven't been imlplemented yet.")
   end
 
-  desc "search", "<name> - NOT IMPLEMENTED"
+  desc "search [something]", "<name> - NOT IMPLEMENTED"
   option :vapp, :banner => " vApp name"
   option :vm, :banner => " vm name"
-  def search(name)
-    say("Sorry buddy, I haven't been imlplemented yet.",:red)
+  def search(arg)#no args accepted, but thor breaks if no arg value here!
+    return unless validate_search_args?(options)
+    #todo: vcloud get org 
+    #unless config[:vcloud][:org]
+    #  query vcloud api for orgs. 
+    #   If 1, store and move on. 
+    #   else 
+        org = get_org    
+    #end
+    say "yay look its an org: #{org}"
+
+    error("Sorry buddy, I haven't been imlplemented yet. I was just toying with you.... ")
   end
+
+
+
 
   desc "snapshot", "[--vm] snapshot something - NOT IMPLEMENTED"
   def snapshot
-    say("Sorry buddy, I haven't been imlplemented yet.",:red)
+    error("Sorry buddy, I haven't been imlplemented yet.")
   end
 
   desc "restore", "[--vm] restore something - NOT IMPLEMENTED"
   def restore
-    say("Sorry buddy, I haven't been imlplemented yet.",:red)
+    error("Sorry buddy, I haven't been imlplemented yet.")
   end
 
   desc "deploy", "[--vm] deploy something - NOT IMPLEMENTED"
   def deploy
-    say("Sorry buddy, I haven't been imlplemented yet.",:red)
+    error("Sorry buddy, I haven't been imlplemented yet.")
   end
 
   private
+
+  def select_vdc_from_org
+
+    # vdc_key = answer
+  end
+
+  def get_org
+    org = config[:vcloud][:org]
+    unless org
+      org = select_something(["asdf","qwer","IDEV7129"])
+      ok "you selected: #{org}"
+      store_org = yes? "Remember this selection? \n(you can override with the `bird setup --vorg <new org>` command\n y\\n? "
+      config[:vcloud][:org] = org if store_org
+      ok "stored #{config[:vcloud][:org]}" if store_org
+      config.save
+    end
+    org
+  end
+
+
+  def validate_search_args?(options)
+    result = 0
+    result += 1 if options[:vapp]
+    result += 1 if options[:vm]
+    if result == 0 then
+      error("I need something to search for. [--vapp | --vm]")
+      result = false
+    elsif result == 2
+      error("uhm, you're confusing me.  Do you want me to search for a vapp or a vm? Please send only one!")
+      result = false
+    end
+    result
+  end
+
+  def select_something(choices)
+    choices = choices.map.with_index{ |a, i| [i+1, *a]}
+    print_table choices
+    selection = ask("Pick one:").to_i
+    choices[selection-1][1]
+  end
+
 
   def get_vcd
     host = config[:vcloud][:host]
@@ -57,23 +111,15 @@ class Bird::Cloud < Thor
     connection = VCloudClient::Connection.new(host, user, pass, org, api)
     connection.login
 
-    ### Fetch a list of the organizations you have access to
-
-    puts "### Fetch and List Organizations"
+    # "Getting Organizations accessible by user ..."
     orgs = connection.get_organizations
-    ap orgs
 
-    # ### Fetch and show an organization, COE is an example, you should replace it with your own organization
-
-    puts "### Fetch and Show 'IDEV7129' Organization"
+    say "Getting #{config[:vcloud][:org]} Organization information ... "
     org = connection.get_organization(orgs["IDEV7129"])
-    ap org
 
-    # ### Fetch and show a vDC, OvDC-PAYG-Bronze-01 is an example, you should replace it with your own vDC
-
-    puts "### Fetch and Show 'IDEV7129_VDC_CGNO' vDC"
+    say "Fetch and Show 'IDEV7129_VDC_CGNO' vDC"
     vdc = connection.get_vdc(org[:vdcs]["IDEV7129_VDC_CGNO"])
-    ap vdc
+
   end
 
   # def login
@@ -86,6 +132,20 @@ class Bird::Cloud < Thor
   # def logout
   #   @connection.logout
   # end
+
+
+  def em(text)
+    shell.set_color(text, nil, true)
+  end
+
+  def ok(msg=nil)
+    text = msg ? "#{msg}" : "OK"
+    say "#{msg}\r", :green
+  end
+
+  def error(msg)
+    say "#{msg}\r", :red
+  end
 
 end
 
