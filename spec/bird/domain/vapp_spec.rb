@@ -26,6 +26,7 @@ describe Bird::Vapp do
    :id=>"8eb169b2-7792-446d-8bcb-4ac7d324d579",
    :vapp_scoped_local_id=>"1794e6cd-091d-47ad-820a-6fc0af70d8ab"}  }  }  
 
+   #TODO: get off your ass and write more unit tests so we can be TDD.. maybe. 
   it "should create a app given json input" do
     vapp = Bird::Vapp.new(vapp_sample)
 

@@ -13,11 +13,9 @@ module Bird
       to_object(fullVm) if fullVm
     end
 
-
-
-
     private
 
+    #TODO: move this to a different object, vmInfo. 
     def initFromVappSummary(array)
       self.friendlyName = array[0]
       vmInfo = array[1]

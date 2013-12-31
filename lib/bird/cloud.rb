@@ -27,7 +27,7 @@ class Bird::Cloud < Thor
     error("Sorry buddy, I haven't been imlplemented yet.")
   end
 
-  #TODO: this doesn't work.  it thinks the command was bird poweroff,
+  #TODO: Fix Subcommand functionality:  it thinks the command was bird poweroff,
   #       not `bird cloud poweroff`
   # desc "poweron", "[--vmid] powers on the vm given an ID."
   # def poweron
@@ -87,6 +87,7 @@ class Bird::Cloud < Thor
   end
 
   # TODO: make selection return if only one option exists
+      #psuedo : key, value = hash.first
   def select_name(choices)
     choices = choices.map.with_index{ |a, i| [i+1, *a]}
     print_table choices
@@ -103,7 +104,7 @@ class Bird::Cloud < Thor
     selected = choices[selection-1]
     selected.shift
     say ""
-    return selected #result is an array
+    return selected
   end
 
   #TODO: refactor to DDD and model objects, separate repository.
@@ -114,8 +115,6 @@ class Bird::Cloud < Thor
       alert "I need to know which vdc to use . . ."
       org = @connection.get_organization_by_name(org_name)
 
-      # if orgs.count then skip the following
-      #psuedo : key, value = hash.first
       selection = select_name_and_id(org[:vdcs])
       error selection
 
