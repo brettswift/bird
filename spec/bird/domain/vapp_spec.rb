@@ -27,21 +27,11 @@ describe Bird::Vapp do
    :vapp_scoped_local_id=>"1794e6cd-091d-47ad-820a-6fc0af70d8ab"}  }  }  
 
   it "should create a app given json input" do
-
-
-    # vapp_json = IO.read("./spec/bird/domain/samples/vapp.json")
-
-    # puts vapp_json[:vms_hash]
-    # puts vapp_sample[:id]
     vapp = Bird::Vapp.new(vapp_sample)
 
-    
     vapp.id.must_equal "e453c846-bf36-4bd7-9e52-255d718df601"
     vapp.vms.size.must_equal 2
 
-
   end
-
-
-
+ 
 end

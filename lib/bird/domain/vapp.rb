@@ -13,22 +13,15 @@ module Bird
       to_object(hash)
     end
 
-    def get_vms_hash
-      self.vms.each { |vmHash|
-        vm = Bird::Vm.new(vmHash)
-        vms << vm
-      }
-    end
-
     private
 
     def to_object(hash)
       self.id = hash[:id]
 
       hash[:vms_hash].each { |vmHash|
-        vm = Bird::Vm.new(vmHash)
+        vm = Bird::Vm.new(nil, vmHash)
         vms << vm
-        vms_hash.store(vm.name,vm.id)
+        vms_hash.store(vm.friendlyName,vm.id)
       }
     end
   end

@@ -1,10 +1,5 @@
-#require 'simplecov'
-#SimpleCov.start if ENV["COVERAGE"]
-
+# Credits for this file go to: https://github.com/jondot/logbook/blob/master/spec/spec_helper.rb
 require 'minitest/autorun'
-
-
-
 require 'rr'
 require 'fakefs/safe'
 require 'user_config'

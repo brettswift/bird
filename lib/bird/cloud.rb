@@ -27,29 +27,17 @@ class Bird::Cloud < Thor
     error("Sorry buddy, I haven't been imlplemented yet.")
   end
 
-  desc "search [something]", "<name> - NOT IMPLEMENTED"
-  option :vapp, :banner => " vApp name"
-  option :vm, :banner => " vm name"
-  def search(arg)#no args accepted, but thor breaks if no arg value here!
-    return unless validate_search_args?(options)
-    #todo: vcloud get org
-    #unless config[:vcloud][:org]
-    #  query vcloud api for orgs.
-    #   If 1, store and move on.
-    #   else
-    org = get_orgid
-    #end
+  #TODO: this doesn't work.  it thinks the command was bird poweroff,
+  #       not `bird cloud poweroff`
+  # desc "poweron", "[--vmid] powers on the vm given an ID."
+  # def poweron
+  #   action_vm(vm_id,'power-on')
+  # end
 
-    select_vdc_from_org
-
-    # find vapp
-    say "yay look its an org: #{org}"
-
-    error("Sorry buddy, I haven't been imlplemented yet. I was just toying with you.... ")
-  end
-
-
-
+  # desc "poweroff", "[--vmid] powers of the vm given an ID."
+  # def poweroff
+  #   action_vm(vm_id,'power-off')
+  # end
 
   desc "snapshot", "[--vm] snapshot something - NOT IMPLEMENTED"
   def snapshot
@@ -72,23 +60,17 @@ class Bird::Cloud < Thor
     vdc_id = get_vdc_id_from_org_name(org_name)
     vapp_id = get_vapp_id_from_vdc_id(vdc_id)
     vm_id = get_vm_id_from_vapp_id(vapp_id)
-
-    say("Success!!! I have my VM Name")
+    action_vm(vm_id)
   end
 
   private
 
-
-
   def get_organization_name
     org = config[:vcloud][:org]
     unless org
-      say "getting organization...."
-      # "Getting Organizations accessible by user ..."
+      alert "I need to know which organization to use . . ."
       orgs = @connection.get_organizations
 
-      # if orgs.count then skip the following
-      #psuedo : key, value = hash.first
       selection = select_name(orgs)
       org = selection[0]
       config[:vcloud][:org] = selection[0]
@@ -104,41 +86,23 @@ class Bird::Cloud < Thor
     org
   end
 
-
-
-
-
-
-  def validate_search_args?(options)
-    result = 0
-    result += 1 if options[:vapp]
-    result += 1 if options[:vm]
-    if result == 0 then
-      error("I need something to search for. [--vapp | --vm]")
-      result = false
-    elsif result == 2
-      error("uhm, you're confusing me.  Do you want me to search for a vapp or a vm? Please send only one!")
-      result = false
-    end
-    result
-  end
-
+  # TODO: make selection return if only one option exists
   def select_name(choices)
     choices = choices.map.with_index{ |a, i| [i+1, *a]}
     print_table choices
-    selection = ask("Pick one:").to_i
+    selection = ask(set_color("Pick one:",:white)).to_i
     selected = choices[selection-1][1]
-    ok("selected: #{selected}")
+    say ""
     return selected #result is an array
   end
 
   def select_name_and_id(choices)
     choices = choices.map.with_index{ |a, i| [i+1, *a]}
     print_table choices
-    selection = ask("Pick one:").to_i
+    selection = ask(set_color("Pick one:",:white)).to_i
     selected = choices[selection-1]
     selected.shift
-    ok("selected: #{selected} -- array count: selected.count")
+    say ""
     return selected #result is an array
   end
 
@@ -147,7 +111,7 @@ class Bird::Cloud < Thor
 
     vdc_id = config[:vcloud][:vdcid]
     unless vdc_id
-      say "I need to know which vdc to use . . ."
+      alert "I need to know which vdc to use . . ."
       org = @connection.get_organization_by_name(org_name)
 
       # if orgs.count then skip the following
@@ -168,14 +132,14 @@ class Bird::Cloud < Thor
         ok "stored configs for vCloud Org: #{config[:vcloud][:vdcid]}"
       end
     end
-    say "using vdc: #{vdc_name}"
+    say "using vdc: #{config[:vcloud][:vdc]}"
     vdc_id
   end
 
   def get_vapp_id_from_vdc_id(vdc_id)
     vapp_id = config[:vcloud][:vappid]
     unless vapp_id
-      say "I need to know which vapp to use . . ."
+      alert "I need to know which vapp to use . . ."
       vdc = @connection.get_vdc(vdc_id)
 
       # if orgs.count then skip the following
@@ -203,13 +167,9 @@ class Bird::Cloud < Thor
 
     vm_id = config[:vcloud][:vmid]
     unless vm_id
-      say "I need to know which vm to use . . ."
+      alert "I need to know which vm to use . . ."
       vappHash = @connection.get_vapp(vapp_id)
       vapp = Bird::Vapp.new(vappHash)
-
-      # if orgs.count then skip the following
-      #psuedo : key, value = hash.first
-      # TODO: convert vdc[:vapps] to a name => ID hash
 
       selection = select_name_and_id(vapp.vms_hash)
 
@@ -217,28 +177,65 @@ class Bird::Cloud < Thor
       vm_name = selection[0]
       config[:vcloud][:vm] = vm_name
       config[:vcloud][:vmid] = vm_id
-
-      # store_org = yes? "Remember this selection? \n(you can override with the `bird setup --vdc <new org>` command\n y\\n? "
-      # if store_org
-      #   config[:vcloud][:vdc] = vdc_name
-      #   config.save
-      #   ok "stored configs for vCloud Org: #{config[:vcloud][:vdc]}"
-      # end
     end
-    say "using vdc: #{vm_name},  #{vm_id}"
     vm_id
   end
 
 
-  def to_be_implemented
+  ######## Actions ############
+  def action_vm(vm_id, selection=nil)
 
-    # ### Fetch and show a vApp, Dev Sandbox is an example, you should replace it with your own vDC
+    vmRaw = @connection.get_vm(vm_id)
+    vm = Bird::Vm.new(vmRaw)
+    showVmInfo(vm)
+    unless selection
+      alert "Actions available:"
+      choices=['show vm details', 'power-on', 'power-off', 'reboot', 'restore-snapshot', 'take-snapshot']
+      choices.delete('power-on') if vm.status == 'running'
+      choices.delete('power-off') if vm.status == 'stopped'
+      selection = select_name(choices)
+    end
 
-    puts "### Fetch and Show 'Dev Sandbox, Database Hosts"
-    vApp = connection.get_vapp(vdc[:vapps]["Dev Sandbox"])
-    ap vApp
+    case selection
+    when 'power-off'
+      taskid = @connection.poweroff_vm(vm_id)
+    when 'power-on'
+      taskid = @connection.poweron_vm(vm_id)
+    when 'reboot'
+      taskid = @connection.reboot(vm_id)
+    when 'restore-snapshot'
+      error "I can't do this for you - functionality is pending..."
+    when "take-snapshot"
+      error "I can't do this for you - functionality is pending..."
+    else
+      error "Please report this bug - or make a proper selection!"
+    end
+
+    if taskid
+      notice("Please wait while I #{selection} your VM . . .")
+      task_result = @connection.wait_task_completion(taskid)
+      if task_result[:errormsg]
+        task_result[:errormsg]
+        return
+      end
+      started = Time.parse(task_result[:start_time])
+      ended = Time.parse(task_result[:end_time])
+      elapsed_seconds = ended - started
+
+      say("Task completed in #{elapsed_seconds}s.")
+      ok(task_result[:status])
+    end
 
   end
+
+  def showVmInfo(vm)
+    notice "VM information:"
+    say vm.friendlyName
+    say "#{vm.ips[0]}" if vm.ips.size > 0
+    vm.status == 'running'  ? ok("#{vm.status}") : error("#{vm.status}")
+    say ""
+  end
+
 
   def login
     host = config[:vcloud][:host]
@@ -247,22 +244,28 @@ class Bird::Cloud < Thor
     org = config[:vcloud][:org]
     api = "1.5"
 
-    say config[:vcloud]
     @connection = VCloudClient::Connection.new("https://#{host}", user, pass, org, api)
-    ok "login to #{config[:vcloud][:host]} . . . "
+    say "login to #{config[:vcloud][:host]} . . . "
     @connection.login
-    ok "  . . . successful"
+    say "  . . . successful"
     ObjectSpace.define_finalizer(self, proc { logout })
   end
 
   def logout
     @connection.logout
-    say "logged out!"
   end
 
 
   def em(text)
     shell.set_color(text, nil, true)
+  end
+
+  def alert(text)
+    say(set_color(text, :yellow))
+  end
+
+  def notice(text)
+    say(set_color(text, :white, :bold))
   end
 
   def ok(msg=nil)
