@@ -1,0 +1,13 @@
++ ---------------------------------------------------------------------------- +
+| TODOS @ Tuesday 31 December 2013 11:34                                       |
+| 22 files scanned                                                             |
++ ---------------------------------------------------------------------------- +
+
+## TODO (7)
+1. cli.rb:12  move to config module?
+2. cli.rb:90  clean this up - too much copy/paste
+3. cloud.rb:8  move to config module?
+4. cloud.rb:30  this doesn't work.  it thinks the command was bird poweroff,
+5. cloud.rb:89  make selection return if only one option exists
+6. cloud.rb:109  refactor to DDD and model objects, separate repository.
+7. vm.rb:9  i don't like this constructor - come back to it 

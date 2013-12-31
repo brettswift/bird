@@ -1,3 +1,5 @@
+#This file could be used to output if the subcommand doens't get fixed. 
+
 NAME
       bird-cloud - manage your cloud!
 
@@ -25,7 +27,7 @@ COMMANDS
 
            With --vapp option,  list is restricted to a VM.
         snapshot
-            Takes a snapshot of the VM Specified.  (Note: vCloud behaviour only stores one snapshot so the previous snapshot will be destroyed.)
+            Takes a snapshot of the VM Specified.  (Important: vCloud behaviour only stores one snapshot so the previous snapshot will be destroyed.)
         restore
             Discards current state, and restores the VM to an existing snapshot. 
         deploy

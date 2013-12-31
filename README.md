@@ -15,7 +15,6 @@ The name may change one day, but for now I'm just bird.
     $ bundle
     $ bird
 
-
 ## Usage
   using a helper shell script:
     $ ./bird help
