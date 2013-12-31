@@ -46,7 +46,7 @@ class Bird::CLI < Thor
         config[:vcloud][:host] = options[:vhost] if options[:vhost]
         config[:vcloud][:host] = options[:vuser] if options[:vuser]
         config[:vcloud][:host] = options[:vpass] if options[:vpass]
-        # config[:vcloud][:org]  = options[:vorg]  if options[:vorg] ==> query for this in cloud.rb and ask to remember. 
+        config[:vcloud][:org]  = options[:vorg]  if options[:vorg] 
         config[:puppet][:host] = options[:phost] if options[:phost]
         config[:puppet][:host] = options[:puser] if options[:puser]
         config[:puppet][:host] = options[:ppass] if options[:ppass]

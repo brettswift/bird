@@ -2,12 +2,16 @@ require 'thor'
 require 'bird'
 require 'user_config'
 require 'vcloud-rest/connection'
+require 'bird/domain/vapp'
 
 class Bird::Cloud < Thor
   include Bird #includes global config.  todo: move to config module?
 
-  default_task :list
-
+  default_task :control
+  def initialize(*args)
+    super
+    login
+  end
   # Hack to override the help message produced by Thor.
   # With PR $387 this causes unexpected behaviour
   # https://github.com/wycats/thor/issues/261#issuecomment-16880836
@@ -28,13 +32,17 @@ class Bird::Cloud < Thor
   option :vm, :banner => " vm name"
   def search(arg)#no args accepted, but thor breaks if no arg value here!
     return unless validate_search_args?(options)
-    #todo: vcloud get org 
+    #todo: vcloud get org
     #unless config[:vcloud][:org]
-    #  query vcloud api for orgs. 
-    #   If 1, store and move on. 
-    #   else 
-        org = get_org    
+    #  query vcloud api for orgs.
+    #   If 1, store and move on.
+    #   else
+    org = get_orgid
     #end
+
+    select_vdc_from_org
+
+    # find vapp
     say "yay look its an org: #{org}"
 
     error("Sorry buddy, I haven't been imlplemented yet. I was just toying with you.... ")
@@ -58,25 +66,47 @@ class Bird::Cloud < Thor
     error("Sorry buddy, I haven't been imlplemented yet.")
   end
 
+  desc "control", "No Args accepted.  Use this, and I'll hold your hand through the process"
+  def control
+    org_name = get_organization_name
+    vdc_id = get_vdc_id_from_org_name(org_name)
+    vapp_id = get_vapp_id_from_vdc_id(vdc_id)
+    vm_id = get_vm_id_from_vapp_id(vapp_id)
+
+    say("Success!!! I have my VM Name")
+  end
+
   private
 
-  def select_vdc_from_org
 
-    # vdc_key = answer
-  end
 
-  def get_org
+  def get_organization_name
     org = config[:vcloud][:org]
     unless org
-      org = select_something(["asdf","qwer","IDEV7129"])
-      ok "you selected: #{org}"
+      say "getting organization...."
+      # "Getting Organizations accessible by user ..."
+      orgs = @connection.get_organizations
+
+      # if orgs.count then skip the following
+      #psuedo : key, value = hash.first
+      selection = select_name(orgs)
+      org = selection[0]
+      config[:vcloud][:org] = selection[0]
+
       store_org = yes? "Remember this selection? \n(you can override with the `bird setup --vorg <new org>` command\n y\\n? "
-      config[:vcloud][:org] = org if store_org
-      ok "stored #{config[:vcloud][:org]}" if store_org
-      config.save
+      if store_org
+        config[:vcloud][:org] = org
+        config.save
+        ok "stored configs for vCloud Org: #{config[:vcloud][:org]}"
+      end
     end
+    say "using org: #{org}"
     org
   end
+
+
+
+
 
 
   def validate_search_args?(options)
@@ -93,45 +123,142 @@ class Bird::Cloud < Thor
     result
   end
 
-  def select_something(choices)
+  def select_name(choices)
     choices = choices.map.with_index{ |a, i| [i+1, *a]}
     print_table choices
     selection = ask("Pick one:").to_i
-    choices[selection-1][1]
+    selected = choices[selection-1][1]
+    ok("selected: #{selected}")
+    return selected #result is an array
+  end
+
+  def select_name_and_id(choices)
+    choices = choices.map.with_index{ |a, i| [i+1, *a]}
+    print_table choices
+    selection = ask("Pick one:").to_i
+    selected = choices[selection-1]
+    selected.shift
+    ok("selected: #{selected} -- array count: selected.count")
+    return selected #result is an array
+  end
+
+  #TODO: refactor to DDD and model objects, separate repository.
+  def get_vdc_id_from_org_name(org_name)
+
+    vdc_id = config[:vcloud][:vdcid]
+    unless vdc_id
+      say "I need to know which vdc to use . . ."
+      org = @connection.get_organization_by_name(org_name)
+
+      # if orgs.count then skip the following
+      #psuedo : key, value = hash.first
+      selection = select_name_and_id(org[:vdcs])
+      error selection
+
+      vdc_name = selection[0]
+      vdc_id = selection[1]
+      config[:vcloud][:vdc] = vdc_name
+      config[:vcloud][:vdcid] = vdc_id
+
+      store_org = yes? "Remember this selection? \n(you can override with the `bird setup --vdc <new org>` command\n y\\n? "
+      if store_org
+        config[:vcloud][:vdc] = vdc_name
+        config[:vcloud][:vdcid] = vdc_id
+        config.save
+        ok "stored configs for vCloud Org: #{config[:vcloud][:vdcid]}"
+      end
+    end
+    say "using vdc: #{vdc_name}"
+    vdc_id
+  end
+
+  def get_vapp_id_from_vdc_id(vdc_id)
+    vapp_id = config[:vcloud][:vappid]
+    unless vapp_id
+      say "I need to know which vapp to use . . ."
+      vdc = @connection.get_vdc(vdc_id)
+
+      # if orgs.count then skip the following
+      #psuedo : key, value = hash.first
+
+      selection = select_name_and_id(vdc[:vapps])
+
+      vapp_name = selection[0]
+      vapp_id = selection[1]
+      config[:vcloud][:vappname] = vapp_name
+      config[:vcloud][:vappid] = vapp_id
+
+      # store_org = yes? "Remember this selection? \n(you can override with the `bird setup --vdc <new org>` command\n y\\n? "
+      # if store_org
+      #   config[:vcloud][:vdc] = vdc_name
+      #   config.save
+      #   ok "stored configs for vCloud Org: #{config[:vcloud][:vdc]}"
+      # end
+    end
+    say "using vapp: #{vapp_name}"
+    vapp_id
+  end
+
+  def get_vm_id_from_vapp_id(vapp_id)
+
+    vm_id = config[:vcloud][:vmid]
+    unless vm_id
+      say "I need to know which vm to use . . ."
+      vappHash = @connection.get_vapp(vapp_id)
+      vapp = Bird::Vapp.new(vappHash)
+
+      # if orgs.count then skip the following
+      #psuedo : key, value = hash.first
+      # TODO: convert vdc[:vapps] to a name => ID hash
+
+      selection = select_name_and_id(vapp.vms_hash)
+
+      vm_id = selection[1]
+      vm_name = selection[0]
+      config[:vcloud][:vm] = vm_name
+      config[:vcloud][:vmid] = vm_id
+
+      # store_org = yes? "Remember this selection? \n(you can override with the `bird setup --vdc <new org>` command\n y\\n? "
+      # if store_org
+      #   config[:vcloud][:vdc] = vdc_name
+      #   config.save
+      #   ok "stored configs for vCloud Org: #{config[:vcloud][:vdc]}"
+      # end
+    end
+    say "using vdc: #{vm_name},  #{vm_id}"
+    vm_id
   end
 
 
-  def get_vcd
+  def to_be_implemented
+
+    # ### Fetch and show a vApp, Dev Sandbox is an example, you should replace it with your own vDC
+
+    puts "### Fetch and Show 'Dev Sandbox, Database Hosts"
+    vApp = connection.get_vapp(vdc[:vapps]["Dev Sandbox"])
+    ap vApp
+
+  end
+
+  def login
     host = config[:vcloud][:host]
     user = config[:vcloud][:user]
     pass = config[:vcloud][:pass]
     org = config[:vcloud][:org]
     api = "1.5"
 
-    connection = VCloudClient::Connection.new(host, user, pass, org, api)
-    connection.login
-
-    # "Getting Organizations accessible by user ..."
-    orgs = connection.get_organizations
-
-    say "Getting #{config[:vcloud][:org]} Organization information ... "
-    org = connection.get_organization(orgs["IDEV7129"])
-
-    say "Fetch and Show 'IDEV7129_VDC_CGNO' vDC"
-    vdc = connection.get_vdc(org[:vdcs]["IDEV7129_VDC_CGNO"])
-
+    say config[:vcloud]
+    @connection = VCloudClient::Connection.new("https://#{host}", user, pass, org, api)
+    ok "login to #{config[:vcloud][:host]} . . . "
+    @connection.login
+    ok "  . . . successful"
+    ObjectSpace.define_finalizer(self, proc { logout })
   end
 
-  # def login
-
-
-  #   @connection = VCloudClient::Connection.new(host, user, pass, org, api)
-  #   @connection.login
-  # end
-
-  # def logout
-  #   @connection.logout
-  # end
+  def logout
+    @connection.logout
+    say "logged out!"
+  end
 
 
   def em(text)
@@ -149,43 +276,3 @@ class Bird::Cloud < Thor
 
 end
 
-
-# host = 'https://vcd011no.lab.vim.dcs.mlb.inet'
-# user = 'bswift'
-# pass = 'asdfasdf'
-# org  = 'IDEV7129'
-# api  = '5.1'
-
-# puts "#################################################################"
-# puts "# vcloud-rest example"
-# puts "#"
-# puts "### Connect to vCloud"
-
-# ### Connect to vCloud
-
-# connection = VCloudClient::Connection.new(host, user, pass, org, api)
-# connection.login
-
-# ### Fetch a list of the organizations you have access to
-
-# puts "### Fetch and List Organizations"
-# orgs = connection.get_organizations
-# ap orgs
-
-# # ### Fetch and show an organization, COE is an example, you should replace it with your own organization
-
-# puts "### Fetch and Show 'IDEV7129' Organization"
-# org = connection.get_organization(orgs["IDEV7129"])
-# ap org
-
-# # ### Fetch and show a vDC, OvDC-PAYG-Bronze-01 is an example, you should replace it with your own vDC
-
-# puts "### Fetch and Show 'IDEV7129_VDC_CGNO' vDC"
-# vdc = connection.get_vdc(org[:vdcs]["IDEV7129_VDC_CGNO"])
-# ap vdc
-
-# # ### Fetch and show a vApp, Dev Sandbox is an example, you should replace it with your own vDC
-
-# puts "### Fetch and Show 'Dev Sandbox, Database Hosts"
-# vApp = connection.get_vapp(vdc[:vapps]["Dev Sandbox"])
-# ap vApp

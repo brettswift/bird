@@ -24,8 +24,11 @@ Gem::Specification.new do |s|
   # specify any dependencies here; for example:
   s.add_development_dependency "bundler", "~> 1.3"
   s.add_development_dependency "guard-minitest"
+  s.add_development_dependency "rr"
+  s.add_development_dependency "fakefs"
   s.add_development_dependency "rake"
   s.add_runtime_dependency "user_config"
+  s.add_runtime_dependency "nokogiri"
   s.add_runtime_dependency "thor"
   s.add_runtime_dependency "vcloud-rest"
 end
