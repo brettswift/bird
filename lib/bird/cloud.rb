@@ -1,4 +1,5 @@
 require 'thor'
+require 'thor/actions'
 require 'bird'
 require 'user_config'
 require 'vcloud-rest/connection'
@@ -6,7 +7,8 @@ require 'bird/domain/vapp'
 
 class Bird::Cloud < Thor
   include Bird #includes global config.  todo: move to config module?
-
+  include Thor::Actions
+  
   default_task :control
   def initialize(*args)
     super
@@ -39,7 +41,7 @@ class Bird::Cloud < Thor
   #   action_vm(vm_id,'power-off')
   # end
 
-  desc "snapshot", "[--vm] snapshot something - NOT IMPLEMENTED"
+  desc "snapshot", "[--vapp] snapshot something - NOT IMPLEMENTED"
   def snapshot
     error("Sorry buddy, I haven't been imlplemented yet.")
   end
@@ -59,7 +61,9 @@ class Bird::Cloud < Thor
     org_name = get_organization_name
     vdc_id = get_vdc_id_from_org_name(org_name)
     vapp_id = get_vapp_id_from_vdc_id(vdc_id)
+    clear
     vm_id = get_vm_id_from_vapp_id(vapp_id)
+    clear
     action_vm(vm_id)
   end
 
@@ -82,7 +86,6 @@ class Bird::Cloud < Thor
         ok "stored configs for vCloud Org: #{config[:vcloud][:org]}"
       end
     end
-    say "using org: #{org}"
     org
   end
 
@@ -118,20 +121,19 @@ class Bird::Cloud < Thor
       selection = select_name_and_id(org[:vdcs])
       error selection
 
-      vdc_name = selection[0]
+      @vdc_name = selection[0]
       vdc_id = selection[1]
-      config[:vcloud][:vdc] = vdc_name
+      config[:vcloud][:vdc] = @vdc_name
       config[:vcloud][:vdcid] = vdc_id
 
       store_org = yes? "Remember this selection? \n(you can override with the `bird setup --vdc <new org>` command\n y\\n? "
       if store_org
-        config[:vcloud][:vdc] = vdc_name
+        config[:vcloud][:vdc] = @vdc_name
         config[:vcloud][:vdcid] = vdc_id
         config.save
         ok "stored configs for vCloud Org: #{config[:vcloud][:vdcid]}"
       end
     end
-    say "using vdc: #{config[:vcloud][:vdc]}"
     vdc_id
   end
 
@@ -146,9 +148,9 @@ class Bird::Cloud < Thor
 
       selection = select_name_and_id(vdc[:vapps])
 
-      vapp_name = selection[0]
+      @vapp_name = selection[0]
       vapp_id = selection[1]
-      config[:vcloud][:vappname] = vapp_name
+      config[:vcloud][:vappname] = @vapp_name
       config[:vcloud][:vappid] = vapp_id
 
       # store_org = yes? "Remember this selection? \n(you can override with the `bird setup --vdc <new org>` command\n y\\n? "
@@ -158,7 +160,6 @@ class Bird::Cloud < Thor
       #   ok "stored configs for vCloud Org: #{config[:vcloud][:vdc]}"
       # end
     end
-    say "using vapp: #{vapp_name}"
     vapp_id
   end
 
@@ -180,8 +181,6 @@ class Bird::Cloud < Thor
     vm_id
   end
 
-
-  ######## Actions ############
   def action_vm(vm_id, selection=nil)
 
     vmRaw = @connection.get_vm(vm_id)
@@ -235,6 +234,25 @@ class Bird::Cloud < Thor
     say ""
   end
 
+  def clear
+    run("clear")
+    say(set_color(" - bird console - ", :white, :bold))
+    say("  vCloud: #{config[:vcloud][:host]}")
+    say("    org: #{config[:vcloud][:org]}")
+    say("    vdc: #{@vdc_name}") if @vdc_name
+    say("    vdc: #{@vapp_name}") if @vapp_name
+    say("    vdc: #{@vm_name}") if @vm_name
+  end
+
+
+ password = 'shhhh'
+# "shhhh"
+ crypted_password = password.encrypt(:symmetric, :password, obfuscation_key)
+# "qSg8vOo6QfU=\n"
+ crypted_password == 'shhhh'
+# true
+ password = crypted_password.decrypt
+# "shhhh"
 
   def login
     host = config[:vcloud][:host]
@@ -246,7 +264,7 @@ class Bird::Cloud < Thor
     @connection = VCloudClient::Connection.new("https://#{host}", user, pass, org, api)
     say "login to #{config[:vcloud][:host]} . . . "
     @connection.login
-    say "  . . . successful"
+    clear
     ObjectSpace.define_finalizer(self, proc { logout })
   end
 
