@@ -3,11 +3,10 @@ require 'bundler/setup'
 require 'thor'
 require 'bird'
 require 'user_config'
-require 'bird/cloud.rb'
+require 'bird/cloud'
 
 class Bird::CLI < Thor
   include Bird #includes global config.  todo: move to config module?
-
   register(Bird::Cloud, :cloud, "cloud [help] [list,snapshot,restore,deploy]", " control your cloud!")
 
   desc "setup", "setup configuration variables"
