@@ -31,4 +31,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "nokogiri"
   s.add_runtime_dependency "thor"
   s.add_runtime_dependency "vcloud-rest"
+  s.add_runtime_dependency "symmetric-encryption"
 end

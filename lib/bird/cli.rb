@@ -32,26 +32,48 @@ class Bird::CLI < Thor
       option :puser, :aliases => :pu, :banner => " puppet ssh user"
       option :ppass, :aliases => :pp, :banner => " puppet password"
       option :showconfig, :aliases => :s, :banner => " shows configuration already saved (supercedes all other commands)"
+      option :reset, :banner => " resets all configuration"
       def setup
         if options[:showconfig]
           show_config
           return
         end
 
+        if options[:reset]
+          result = ask(set_color("This will clear all configuration... are you sure? (Y/n)", :white, :on_red, :bold))
+
+          if result == 'Y' then 
+            clearAllSettings
+            return
+          end
+        end
+
         #command params should override current config
         config[:vcloud][:host] = options[:vhost] if options[:vhost]
-        config[:vcloud][:host] = options[:vuser] if options[:vuser]
-        config[:vcloud][:host] = options[:vpass] if options[:vpass]
+        config[:vcloud][:user] = options[:vuser] if options[:vuser]
+        config[:vcloud][:pass] = encrypt(options[:vpass]) if options[:vpass]
         config[:vcloud][:org]  = options[:vorg]  if options[:vorg] 
         config[:puppet][:host] = options[:phost] if options[:phost]
-        config[:puppet][:host] = options[:puser] if options[:puser]
-        config[:puppet][:host] = options[:ppass] if options[:ppass]
+        config[:puppet][:user] = options[:puser] if options[:puser]
+        config[:puppet][:pass] = encrypt(options[:ppass]) if options[:ppass]
+
 
         check_setup
         config.save
       end
 
       private
+
+      def clearAllSettings
+        config[:vcloud][:host] = nil
+        config[:vcloud][:user] = nil
+        config[:vcloud][:pass] = nil
+        config[:vcloud][:org]  = nil
+        config[:puppet][:host] = nil
+        config[:puppet][:user] = nil
+        config[:puppet][:pass] = nil
+        config.save
+      end
       def show_config
         config.each do |key, val|
           say "#{key}: #{val}"
@@ -59,7 +81,7 @@ class Bird::CLI < Thor
       end
 
       def check_setup
-        if config_nil? then
+        if config_required? then
           setup_from_scratch
         else
           say "I'm fully configured, lets go... ",  :green
@@ -69,18 +91,19 @@ class Bird::CLI < Thor
         end
       end
 
-      def config_nil?
-        false
+      def config_required?
+        result = false
         config[:vcloud]={} unless config[:vcloud]
         config[:puppet]={} unless config[:puppet]
 
-        true unless config[:vcloud][:host]
-        true unless config[:vcloud][:user]
-        true unless config[:vcloud][:pass]
-        # true unless config[:vcloud][:org]
-        true unless config[:puppet][:host]
-        true unless config[:puppet][:user]
-        true unless config[:puppet][:pass]
+        result = true unless config[:vcloud][:host]
+        result = true unless config[:vcloud][:user]
+        result = true unless config[:vcloud][:pass]
+        result = # false unless config[:vcloud][:org]
+        result = true unless config[:puppet][:host]
+        result = true unless config[:puppet][:user]
+        result = true unless config[:puppet][:pass]
+        return result
       end
 
       def setup_from_scratch #TODO: clean this up - too much copy/paste
@@ -103,7 +126,7 @@ class Bird::CLI < Thor
         end
         unless config[:vcloud][:pass]
           pass = ask("Enter vcloud pass: \r\n")
-          config[:vcloud][:pass] = pass
+          config[:vcloud][:pass] = encrypt(pass)
           say "using: shhh it's a secret\n"
         end
 
@@ -120,7 +143,7 @@ class Bird::CLI < Thor
         end
         unless config[:puppet][:pass]
           pass = ask("Enter puppet pass: \r\n")
-          config[:puppet][:pass] = pass
+          config[:puppet][:pass] = encrypt(pass)
           say "using: shhh it's a secret\n", :green
         end
 

@@ -62,6 +62,8 @@ class Bird::Cloud < Thor
     vdc_id = get_vdc_id_from_org_name(org_name)
     vapp_id = get_vapp_id_from_vdc_id(vdc_id)
     clear
+    #TODO: really need more DDD patterns.  encapsulate everything in controller objects. 
+    # =>   selecting a vApp will give you two types of commands - actions, and select a vm within. 
     vm_id = get_vm_id_from_vapp_id(vapp_id)
     clear
     action_vm(vm_id)
@@ -182,15 +184,15 @@ class Bird::Cloud < Thor
   end
 
   def action_vm(vm_id, selection=nil)
-
     vmRaw = @connection.get_vm(vm_id)
     vm = Bird::Vm.new(vmRaw)
     showVmInfo(vm)
     unless selection
       alert "Actions available:"
-      choices=['show vm details', 'power-on', 'power-off', 'reboot', 'restore-snapshot', 'take-snapshot']
+      choices=['power-on', 'power-off', 'reboot', 'exit']
       choices.delete('power-on') if vm.status == 'running'
       choices.delete('power-off') if vm.status == 'stopped'
+      choices.delete('reboot') if vm.status == 'stopped'
       selection = select_name(choices)
     end
 
@@ -200,11 +202,9 @@ class Bird::Cloud < Thor
     when 'power-on'
       taskid = @connection.poweron_vm(vm_id)
     when 'reboot'
-      taskid = @connection.reboot(vm_id)
-    when 'restore-snapshot'
-      error "I can't do this for you - functionality is pending..."
-    when "take-snapshot"
-      error "I can't do this for you - functionality is pending..."
+      taskid = @connection.reboot_vm(vm_id)
+    when 'exit'
+      return
     else
       error "Please report this bug - or make a proper selection!"
     end
@@ -240,20 +240,25 @@ class Bird::Cloud < Thor
     say("  vCloud: #{config[:vcloud][:host]}")
     say("    org: #{config[:vcloud][:org]}")
     say("    vdc: #{@vdc_name}") if @vdc_name
-    say("    vdc: #{@vapp_name}") if @vapp_name
-    say("    vdc: #{@vm_name}") if @vm_name
+    say("    vapp: #{@vapp_name}") if @vapp_name
   end
  
   def login
     host = config[:vcloud][:host]
     user = config[:vcloud][:user]
-    pass = config[:vcloud][:pass]
+    pass_encoded = config[:vcloud][:pass]
     org = config[:vcloud][:org]
     api = "1.5"
+
+    pass = decrypt(pass_encoded)
 
     @connection = VCloudClient::Connection.new("https://#{host}", user, pass, org, api)
     say "login to #{config[:vcloud][:host]} . . . "
     @connection.login
+
+    error("Login failed.")
+    alert("To update password run:  `bird setup --vpass <password>`")
+
     clear
     ObjectSpace.define_finalizer(self, proc { logout })
   end

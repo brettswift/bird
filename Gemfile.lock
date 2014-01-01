@@ -21,6 +21,7 @@ PATH
   specs:
     bird (0.0.4)
       nokogiri
+      symmetric-encryption
       thor
       user_config
       vcloud-rest
@@ -68,6 +69,7 @@ GEM
     rr (1.1.2)
     ruby-progressbar (1.2.0)
     slop (3.4.7)
+    symmetric-encryption (3.2)
     timers (1.1.0)
     user_config (0.0.4)
 
