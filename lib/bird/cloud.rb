@@ -229,9 +229,9 @@ class Bird::Cloud < Thor
 
   def showVmInfo(vm)
     notice "VM information:"
-    say vm.friendlyName
-    say "#{vm.ips[0]}" if vm.ips.size > 0
-    vm.status == 'running'  ? ok("#{vm.status}") : error("#{vm.status}")
+    say("  name:   #{vm.friendlyName}")
+    say("  ips:    #{vm.ips[0]}") if vm.ips.size > 0
+    vm.status == 'running'  ? ok("  staus:  #{vm.status}") : error("  staus:  #{vm.status}")
     say ""
   end
 
