@@ -1,0 +1,56 @@
+#! /usr/bin/ruby
+# Web Sequence Diagram   http://goo.gl/xyI3qg
+
+# pseudo code:
+
+Class Bird::VDC
+
+def initialize(vdc_id)
+  # load full vdc domain object
+  #@vdc = repository.loadVdc(vdc_id)
+end
+
+def run
+  result = nil
+  begin
+    result = operate_on_vdc
+  end while result == true #continue working with this vDC until the user exits
+
+  return result  # result needs to be a constant return code
+
+end
+
+def operate_on_vdc
+  getActionsList
+  getVMList
+
+  # list all actions and sub objects (in this case vApps). 
+  # actions to come from domain Object. 
+  list = @vdc.getActionsList + @vdc.getVMList + ["return to vOrg", "exit"]
+
+  selection =  makeSelection #abstract out 'makeSelection' to a printer/selector to handle actions & id's. 
+
+  case selection
+  when 'exit'
+    # program interrupt?
+    #maybe return 'exit' - convention for parent to pass exit up the stack?
+  when 'return to VDC'
+    return false
+  when 'vApp selection' #somehow?
+    vapp = VApp:new(vapp_id)
+    result = vapp.run
+
+    #handle return code of method down the chain
+    if result == 'exit'
+      return 'exit'
+    else
+      return
+    end
+
+    return true
+
+  end
+end
+
+
+end
