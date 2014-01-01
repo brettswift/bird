@@ -1,16 +1,17 @@
 + ---------------------------------------------------------------------------- +
-| TODOS @ Wednesday 01 January 2014 14:18                                      |
-| 24 files scanned                                                             |
+| TODOS @ Wednesday 01 January 2014 16:15                                      |
+| 21 files scanned                                                             |
 + ---------------------------------------------------------------------------- +
 
-## TODO (10)
-1. cli.rb:9  move to config module?
-2. cli.rb:109  clean this up - too much copy/paste
-3. cloud.rb:9  move to config module?
-4. cloud.rb:32  Fix Subcommand functionality:  it thinks the command was bird poweroff,
-5. cloud.rb:65  really need more DDD patterns.  encapsulate everything in controller objects. 
-6. cloud.rb:94  make selection return if only one option exists
-7. cloud.rb:115  refactor to DDD and model objects, separate repository.
-8. vapp_spec.rb:29  get off your ass and write more unit tests so we can be TDD.. maybe. 
+## TODO (11)
+1. cloud.rb:9  move to config module?
+2. cloud.rb:32  Fix Subcommand functionality:  it thinks the command was bird poweroff,
+3. cloud.rb:65  really need more DDD patterns.  encapsulate everything in controller objects. 
+4. cloud.rb:74  REFACTOR BRANCH:  workflowRefactor
+5. cloud.rb:95  make selection return if only one option exists
+6. cloud.rb:116  refactor to DDD and model objects, separate repository.
+7. cli.rb:9  move to config module?
+8. cli.rb:109  clean this up - too much copy/paste
 9. vm.rb:9  i don't like this constructor - come back to it 
 10. vm.rb:18  move this to a different object, vmInfo. 
+11. vapp_spec.rb:29  get off your ass and write more unit tests so we can be TDD.. maybe. 
