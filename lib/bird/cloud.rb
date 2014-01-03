@@ -103,6 +103,7 @@ class Bird::Cloud < Thor
 
   private
 
+  #TODO: REFACTOR BRANCH:  workflowRefactor
   def get_organization_name
     org = config[:vcloud][:org]
     unless org
