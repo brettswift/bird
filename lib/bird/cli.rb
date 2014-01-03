@@ -9,6 +9,27 @@ class Bird::CLI < Thor
   include Bird #includes global config.  todo: move to config module?
   register(Bird::Cloud, :cloud, "cloud [help] [list,snapshot,restore,deploy]", " control your cloud!")
 
+  desc "vm_snapshot_restore", "shortcut to restore a snapshot by passing in all required parameters" #, :hide => true
+  option :vhost, :required => true, :banner => " vcloud host"
+  option :vm_id, :required => true, :banner => " vm id"
+  option :vorg, :required => true, :banner => " vorg name"
+  option :vuser, :required => true, :banner => " vcloud user name"
+  option :vpass, :required => true, :banner => " encrypted password for vcloud user"
+  def vm_snapshot_restore
+    ok("going to request snapshot")
+    # 9619dbf2-7b85-4c78-9384-07995719f920
+    #./bird vm_snapshot_restore --vhost='vcd011no.lab.vim.dcs.mlb.inet' --vorg=IDEV7129 --vuser=bswift --vpass=azBHehbD2EibMuxGZPqIVQ== --vm_id=9619dbf2-7b85-4c78-9384-07995719f920
+    cloud = Bird::Cloud.new
+    # this should go into cloud.rb but it doesn't like the subcommands! 
+    cloud.host = options[:vhost]
+    cloud.org = options[:vorg]
+    cloud.user = options[:vuser]
+    cloud.pass = options[:vpass]
+
+    cloud.do_vm_snapshot_restore(options[:vm_id])
+  end
+
+
   desc "setup", "setup configuration variables"
   long_desc <<-LONGDESC
         Configures vCloud and Puppet hosts and credentials. 

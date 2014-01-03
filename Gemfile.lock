@@ -1,9 +1,9 @@
 GIT
-  remote: git@github.com:astratto/vcloud-rest.git
-  revision: 876be3b051f13943b4fe65d166e5e92b4c0fa5e1
-  branch: master
+  remote: git@github.com:brettswift/vcloud-rest.git
+  revision: 07b51365982df708afb164a446c09b950d4a95cf
+  branch: vmSnapshots
   specs:
-    vcloud-rest (1.1.0)
+    vcloud-rest (1.1.1)
       httpclient (~> 2.3.3)
       nokogiri (>= 1.5.10)
       rest-client (~> 1.6.7)
@@ -61,7 +61,7 @@ GEM
       method_source (~> 0.8)
       slop (~> 3.4)
     rake (10.1.1)
-    rb-fsevent (0.9.3)
+    rb-fsevent (0.9.4)
     rb-inotify (0.9.3)
       ffi (>= 0.5.0)
     rest-client (1.6.7)
