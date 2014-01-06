@@ -37,14 +37,16 @@ module Bird
         desc "control","does a lot of stuff for you "
         def control
             load_vdc
-
+            reset_header
             vapp_summary = select_object_from_array(@curr_vdc.vapps)
 
             @curr_vapp = chain.get_vapp(vapp_summary.id)
+            reset_header
 
             vm_summary = select_object_from_array(@curr_vapp.vms)
 
             @curr_vm = chain.get_vm(vm_summary.id)
+            reset_header
 
             action_vm(@curr_vm.id)
 
@@ -74,21 +76,31 @@ module Bird
         def showVmInfo(vm)
             notice "VM information:"
             say("  name:   #{vm.name}")
-            if vm.ips.size > 0
-                say("  ips:    #{vm.ips[0]}")
-            elsif
-                say ""
-            end
+            # if vm.ips.size > 0
+            #     say("  ips:    #{vm.ips[0]}")
+            # elsif
+            #     say ""
+            # end
 
             say("  id:     #{vm.id}") if vm.id
             vm.status == 'running'  ? ok("  staus:  #{vm.status}") : error("  staus:  #{vm.status}")
             say ""
         end
 
+        def reset_header
+            run("clear")
+            say(set_color(" - bird console - ", :white, :bold))
+            say("  vCloud: #{@host}")
+            say("    org: #{@org_name}")
+            say("    vdc: #{@curr_vdc.name}") if @curr_vdc
+            say("    vapp: #{@curr_vapp.name}") if @curr_vapp
+            # say("    vm: #{@curr_vm.name}") if @curr_vm
+            say(" - - - - - - - - - - - - - - - - - - - -")
+        end
+
         def action_vm(vm_id, selection=nil)
             # vmRaw = @connection.get_vm(vm_id)
             # vm = Bird::Vm.new(vmRaw)
-            error vm_id
             vm = @curr_vm
             showVmInfo(vm)
             unless selection
