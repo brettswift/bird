@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/github/brettswift/bird.png)](https://codeclimate.com/github/brettswift/bird)
+
 # bird
 
 I am a command line tool to interact with VMWare vCloud Director API and to kick the Puppetlabs Puppet agent. 
