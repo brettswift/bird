@@ -24,7 +24,7 @@ module Bird
     attr_reader :api
 
     def initialize()
-      login
+      @connection = vconnection
     end
 
     desc "","", :hide => true
@@ -86,27 +86,7 @@ module Bird
       end
       config_value
     end
-
-    def login
-      load_config
-
-      @connection ||= VCloudClient::Connection.new("https://#{@host}", @user, @pass, @org_name, @api)
-      @connection.login
-
-      # TODO: handle in cli:   error("Login failed.")
-      # TODO: handle in cli:   alert("To update password run:  `bird setup --vpass <password>`")
-
-      # TODO: handle in cli:   clear
-      ObjectSpace.define_finalizer(self, proc { logout })
-    end
-
-    def validate_required(variable, varname)
-      raise "#{varname} is required to log in.  Set with: `bird setup --#{varname} <value>" unless variable
-    end
-
-    def logout
-      @connection.logout
-    end
+  
 
     ##### shit not refactored yet #######
 

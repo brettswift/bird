@@ -39,7 +39,8 @@ module Bird
     desc "control","does a lot of stuff for you "
     def control
 
-      
+        puts chain.get_vdc
+
 
     # vdc_id = get_vdc_id_from_org_name(org_name)
     # vapp_id = get_vapp_id_from_vdc_id(vdc_id)

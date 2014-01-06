@@ -1,4 +1,5 @@
 require 'bird'
+require 'bird/services/vcloud_connection'
 
 module Bird
   class VdcService
