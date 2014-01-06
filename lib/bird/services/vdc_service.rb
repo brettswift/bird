@@ -39,6 +39,7 @@ module Bird
           allocated_ips << vapp.allocatedIps
         }
       end
+      #TODO: list these with their vm name. 
       allocated_ips = allocated_ips.flatten
       allocated_ips.reject! { |c| c == nil }
       allocated_ips.sort!
