@@ -39,7 +39,7 @@ module Bird
     desc "","", :hide => true
     def create_vm_snapshot(vm_id)
       taskid = self.vconnection.create_vm_snapshot(vm_id)
-
+      alert("this could take around 4 minutes . . . please wait . . .")
       wait_for_task(taskid)
     end
 

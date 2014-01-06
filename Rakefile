@@ -17,9 +17,9 @@ task "runBird"  do
   sh %Q{clear}
 
   puts "\nbird test".white
-  sh %Q{bundle exec ./bin/bird test} do |ok, res|
+  sh %Q{bundle exec ./bin/bird cloud ips} do |ok, res|
     if ! ok
-      puts "failed to run bird test"
+      puts "failed to run bird cloud ips"
     end
   end
 

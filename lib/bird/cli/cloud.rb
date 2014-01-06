@@ -36,14 +36,7 @@ module Bird
 
         desc "control","does a lot of stuff for you "
         def control
-            unless @curr_vdc
-                vorg = chain.get_vorg(@org_name)
-                if vorg.vdcs.size == 1
-                    @curr_vdc = vorg.vdcs[0]
-                end
-            end
-
-            @curr_vdc = chain.get_vdc(vdc_id: @curr_vdc.id)
+            load_vdc
 
             vapp_summary = select_object_from_array(@curr_vdc.vapps)
 
@@ -57,7 +50,26 @@ module Bird
 
         end
 
+
+        desc "ips","list ips of machines that have been allocated", :hide => true
+        def ips
+            load_vdc
+            @curr_vdc = chain.get_vdc(vdc_id: @curr_vdc.id)
+            ips = chain.get_allocated_ips(@curr_vdc)
+            print_array ips
+        end
+
         private
+
+        def load_vdc
+            unless @curr_vdc
+                vorg = chain.get_vorg(@org_name)
+                if vorg.vdcs.size == 1
+                    @curr_vdc = vorg.vdcs[0]
+                end
+            end
+            @curr_vdc = chain.get_vdc(vdc_id: @curr_vdc.id)
+        end
 
         def showVmInfo(vm)
             notice "VM information:"
