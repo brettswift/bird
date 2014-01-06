@@ -22,7 +22,7 @@ module Bird
       self.id = hash[:id]
       self.name = hash[:name]
       self.status = hash[:status]
-      self.snapshotDate = hash[:vapp_snapshot][:creation_date]
+      self.snapshotDate = hash[:vapp_snapshot][:creation_date] if hash[:vapp_snapshot]
 
       hash[:vms_hash].each { |vmHash|
         vm = Bird::Vm.new.fromVappSummary(vmHash)
