@@ -18,8 +18,6 @@ module Bird
   class Cloud < ThorBase
     include Bird #includes global config.  todo: move to config module?
 
-    attr_accessor :cloud_service
-
     attr_accessor :host
     attr_accessor :org_name
     attr_accessor :user
@@ -33,15 +31,14 @@ module Bird
     default_task :control
     def initialize(*args)
       super
-      @cloud_service ||= Bird::CloudService.new
     end
 
     desc "control","does a lot of stuff for you "
     def control
 
-        puts chain.get_vdc
+        org = Bird.Vorg.new.from_hash(chain.get_vorg(@org_name))
 
-
+        puts org
     # vdc_id = get_vdc_id_from_org_name(org_name)
     # vapp_id = get_vapp_id_from_vdc_id(vdc_id)
     # clear

@@ -17,7 +17,7 @@ module Bird
       @allocatedIps = []
     end
 
-    def fromHash(hash)
+    def from_hash(hash)
       isSummary = false
       self.id = hash[:id]
       self.name = hash[:name]

@@ -10,7 +10,7 @@ module Bird
       self.vapps = []
     end
 
-    def fromHash(hash)
+    def from_hash(hash)
       @id = hash[:id]
       @name = hash[:name]
 

@@ -9,7 +9,9 @@ module Bird
 
   def self.vconnection
     @@vconnection ||= VCloudConnectionFactory.new
+    puts @@vconnection
   end
+
 
 
   class VCloudConnectionFactory <ThorBase
