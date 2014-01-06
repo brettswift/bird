@@ -1,7 +1,12 @@
 require "bird/version"
-require "bird/cli"
+require "bird/cli/cli"
 require 'user_config'
 require 'symmetric-encryption'
+require 'bird/services/vm_service'
+require 'bird/services/vapp_service'
+require 'bird/services/vdc_service'
+require 'bird/services/vorg_service'
+
 
 module Bird
   # share config across module
@@ -33,16 +38,32 @@ module Bird
     SymmetricEncryption.decrypt(encryptedText)
   end
 
-  private
 
-  # def cipher
-  #   Bird.cipher
-  # end
+  def next_in_chain(link)
+    @next = link
+  end
 
-  # def self.cipher
-  #   @cipher ||= Gibberish::AES.new("p4ssw0rd")
-  # end
+  def method_missing(method, *args, &block)
+    if @next == nil
+      puts "This request cannot be handled! #{method}"
+      return
+    end
+    @next.__send__(method, *args, &block)
+  end
 
+  def self.dostuff
+    chain.vm_power_on
+    chain.vdc_list_vapps
+  end
+
+  def chain
+    Bird.chain
+  end
+
+  def self.chain
+    #chain to run most specific first
+    @chain ||= Bird::VmService.new(Bird::VappService.new(Bird::VdcService.new(Bird::VorgService.new)))
+  end
 
 
 end

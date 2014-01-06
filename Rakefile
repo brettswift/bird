@@ -1,5 +1,6 @@
 require "bundler/gem_tasks"
 require 'rake/testtask'
+require 'colorize'
 
 Rake::TestTask.new do |t|
   t.libs << "spec"
@@ -10,25 +11,41 @@ end
 
 task :default => [:install]
 
-  # desc "full uninstall and redeploy"
-  # task :redeploy => [:uninstall, :build, :install] do
-  #   puts "Complete redeploy at: #{Time.now}"
-  # end
 
-  # desc "Uninstall Bird"
-  # task :uninstall do
-  #   sh %Q{gem uninstall bird -xq} #do |ok, res|
-  #   #   if ! ok
-  #   #     puts "#######"
-  #   #     puts res
-  #   #     puts "#######"
-  #   #     puts "fail to uninstall bird (status = #{res.exitstatus})"
-  #   #   else
-  #   #     puts "uninstalled bird"
-  #   #   end
-  #   # end
-  # end
- 
+desc "continuous testing"
+task "runBird"  do
+  sh %Q{clear}
+
+  puts "\nbird test".white
+  sh %Q{bundle exec ./bin/bird test} do |ok, res|
+    if ! ok
+      puts "failed to run bird test"
+    end
+  end
+
+  puts "\nbird help".white
+  sh %Q{bundle exec ./bin/bird help} do |ok, res|
+    if ! ok
+      puts "failed to run bird help"
+    end
+  end
+
+  puts "\nbird help cloud".white
+  sh %Q{bundle exec ./bin/bird help cloud} do |ok, res|
+    if ! ok
+      puts "failed to run bird help cloud"
+    end
+  end
+
+  # sh "'\e[1;37m doing shit \e[0m'" do |ok,res| end
+  puts "\ntests".white
+  sh %Q{bundle exec rake test} do |ok, res|
+    if ! ok
+      puts "failed to run bundle exec rake test"
+    end
+  end
+end
+
 
 desc "Install Gems"
 task "bundle:install"  do

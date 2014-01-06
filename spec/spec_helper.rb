@@ -1,8 +1,11 @@
 # Credits for this file go to: https://github.com/jondot/logbook/blob/master/spec/spec_helper.rb
 require 'minitest/autorun'
+require 'minitest/reporters'
 require 'rr'
 require 'fakefs/safe'
 require 'user_config'
+
+Minitest::Reporters.use!
 
 def file_content(file)
   File.read(File.expand_path("files/"+file, File.dirname(__FILE__)))

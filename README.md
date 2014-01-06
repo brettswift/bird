@@ -13,7 +13,8 @@ The name may change one day, but for now I'm just bird.
 
     $ git clone
     $ bundle
-    $ bird
+    $ ./bird  <<or>>  guard
+
 
 ## Usage
   using a helper shell script:

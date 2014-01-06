@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require "bird/cli"
+require "bird/cli/cli"
 
 begin
   Bird::CLI.start

@@ -1,29 +1,46 @@
-require 'yaml'
 require 'bird/domain/vm'
+
 module Bird
   class Vapp
     attr_accessor :id
     attr_accessor :name
-    attr_accessor :vms 
-    attr_accessor :vms_hash
+    attr_accessor :status
+    attr_accessor :snapshotDate
+    attr_accessor :vms
+    attr_reader   :isSummary
+    attr_reader   :allocatedIps
+    # attr_accessor :vms_hash
 
-    def initialize(hash)
-      self.vms = []
-      self.vms_hash = {}
-      to_object(hash)
+    def initialize
+      @isSummary = true
+      @vms = []
+      @allocatedIps = []
     end
 
-    private
-
-    def to_object(hash)
+    def fromHash(hash)
+      isSummary = false
       self.id = hash[:id]
+      self.name = hash[:name]
+      self.status = hash[:status]
+      self.snapshotDate = hash[:vapp_snapshot][:creation_date]
 
       hash[:vms_hash].each { |vmHash|
-        vm = Bird::Vm.new(nil, vmHash)
-        vms << vm
-        vms_hash.store(vm.friendlyName,vm.id)
+        vm = Bird::Vm.new.fromVappSummary(vmHash)
+        @vms << vm
+        @allocatedIps << vm.ips
+        # vms_hash.store(vm.friendlyName,vm.id)
       }
+      self
     end
+
+    def fromNameAndId(name,id)
+      @name = name
+      @id = id
+      self
+      end
+    private
+
+
   end
 end
 
