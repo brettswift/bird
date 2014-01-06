@@ -26,12 +26,14 @@ module Bird
     end
 
     desc "ips","here becuase subcommands don't work"
-    def cloud(subcommand: nil)
-      if(subcommand == 'ips')
+    def ips
         Bird::Cloud.new.ips
-      else
+    end
+
+
+    desc "cloud","here becuase subcommands don't work"
+    def cloud
         Bird::Cloud.new.control
-      end   
     end
 
   end
