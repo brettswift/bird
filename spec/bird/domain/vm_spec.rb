@@ -11,9 +11,9 @@ describe Bird::Vm do
 
   it "should create a vm given array from vapp summary" do
 
-    vm = Bird::Vm.new.fromVappSummary(vm_sample_from_vapp)
+    vm = Bird::Vm.new.from_app_summary(vm_sample_from_vapp)
     
-    vm.friendlyName.must_equal "devprovepzl100 - Ad-hoc Sandbox"
+    vm.name.must_equal "devprovepzl100 - Ad-hoc Sandbox"
     vm.id.must_equal "867e5e4e-389b-42d5-a2ec-da229856f90a"
     vm.status.must_equal "running"
     vm.ips.size.must_equal 1
@@ -22,9 +22,9 @@ describe Bird::Vm do
 
   it "should create a vm given full response from API" do
 
-    vm = Bird::Vm.new.fromFullHash(vm_sample_full)
+    vm = Bird::Vm.new.from_hash(vm_sample_full)
     
-    vm.friendlyName.must_equal "Login Test Server"
+    vm.name.must_equal "Login Test Server"
     vm.machineName.must_equal "devprovepzl005"
     vm.id.must_equal "9619dbf2-7b85-4c78-9384-07995719f920"
     vm.status.must_equal "running"

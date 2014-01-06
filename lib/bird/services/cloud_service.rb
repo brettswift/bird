@@ -162,41 +162,6 @@ module Bird
       vm_id
     end
 
-    def action_vm(vm_id, selection=nil)
-      vmRaw = @connection.get_vm(vm_id)
-      vm = Bird::Vm.new(vmRaw)
-      showVmInfo(vm)
-      unless selection
-        alert "Actions available:"
-        choices=['power-on', 'power-off', 'reboot', 'take snapshot', 'revert snapshot', 'exit']
-        choices.delete('power-on') if vm.status == 'running'
-        choices.delete('power-off') if vm.status == 'stopped'
-        choices.delete('reboot') if vm.status == 'stopped'
-        selection = select_name(choices)
-      end
-
-      case selection
-      when 'power-off'
-        taskid = @connection.poweroff_vm(vm_id)
-      when 'power-on'
-        taskid = @connection.poweron_vm(vm_id)
-      when 'reboot'
-        taskid = @connection.reboot_vm(vm_id)
-      when 'take snapshot'
-        taskid = @connection.create_vm_snapshot(vm_id)
-      when 'revert snapshot'
-        taskid = @connection.revert_vm_snapshot(vm_id)
-      when 'exit'
-        return
-      else
-        error "Please report this bug - or make a proper selection!"
-      end
-
-      if taskid
-        wait_for_task(taskid)
-      end
-
-    end
 
     def wait_for_task(taskid)
       notice("Please wait while I complete your task.")
@@ -215,7 +180,7 @@ module Bird
 
     def showVmInfo(vm)
       notice "VM information:"
-      say("  name:   #{vm.friendlyName}")
+      say("  name:   #{vm.name}")
       say("  ips:    #{vm.ips[0]}") if vm.ips.size > 0
       say("  id:     #{vm.id}") if vm.id
       vm.status == 'running'  ? ok("  staus:  #{vm.status}") : error("  staus:  #{vm.status}")

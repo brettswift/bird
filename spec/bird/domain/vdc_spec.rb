@@ -18,7 +18,7 @@ describe Bird::Vdc do
     vdc.vapps[0].id.must_equal "2b849398-0ca1-4853-92b9-2970b65339e6"
 
     # vapp.vms[0].ips.must_include "10.191.101.118"
-    # vapp.vms[0].friendlyName.must_equal "devprovepzl101 - Mykola deploy test"
+    # vapp.vms[0].name.must_equal "devprovepzl101 - Mykola deploy test"
     # vapp.vms[0].machineName.must_equal "devprovepzl101"
 
   end

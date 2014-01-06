@@ -2,7 +2,7 @@
 module Bird
   class Vm
     attr_accessor :id
-    attr_accessor :friendlyName
+    attr_accessor :name
     attr_accessor :machineName
     attr_accessor :ips
     attr_accessor :status
@@ -13,9 +13,9 @@ module Bird
       @ips = []
     end
 
-    def fromVappSummary(array)
+    def from_app_summary(array)
 
-      @friendlyName = array[0]
+      @name = array[0]
       vmInfo = array[1]
       @id = vmInfo[:id]
       @status = vmInfo[:status]
@@ -26,10 +26,10 @@ module Bird
       self
     end
 
-    def fromFullHash(vm)
+    def from_hash(vm)
       @isSummary = false
       @id = vm[:id]
-      @friendlyName = vm[:vm_name]
+      @name = vm[:vm_name]
       @machineName = vm[:guest_customizations][:computer_name]
       @status = vm[:status]
       @ips << vm[:networks][:ip]

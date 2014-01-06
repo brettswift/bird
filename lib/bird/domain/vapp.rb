@@ -25,10 +25,10 @@ module Bird
       self.snapshotDate = hash[:vapp_snapshot][:creation_date] if hash[:vapp_snapshot]
 
       hash[:vms_hash].each { |vmHash|
-        vm = Bird::Vm.new.fromVappSummary(vmHash)
+        vm = Bird::Vm.new.from_app_summary(vmHash)
         @vms << vm
         @allocatedIps << vm.ips
-        # vms_hash.store(vm.friendlyName,vm.id)
+        # vms_hash.store(vm.name,vm.id)
       }
       self
     end

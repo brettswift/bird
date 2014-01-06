@@ -48,20 +48,64 @@ module Bird
             vapp_summary = select_object_from_array(@curr_vdc.vapps)
 
             @curr_vapp = chain.get_vapp(vapp_summary.id)
-            
-            # vapp_id = get_vapp_id_from_vdc_id(vdc_id)
-            # clear
-            # #TODO: really need more DDD patterns.  encapsulate everything in controller objects.
-            # # =>   selecting a vApp will give you two types of commands - actions, and select a vm within.
-            # vm_id = get_vm_id_from_vapp_id(vapp_id)
-            # clear
-            # action_vm(vm_id)
 
+            vm_summary = select_object_from_array(@curr_vapp.vms)
 
+            @curr_vm = chain.get_vm(vm_summary.id)
+
+            action_vm(@curr_vm.id)
 
         end
 
         private
+
+        def showVmInfo(vm)
+            notice "VM information:"
+            say("  name:   #{vm.name}")
+            if vm.ips.size > 0
+                say("  ips:    #{vm.ips[0]}")
+            elsif
+                say ""
+            end
+
+            say("  id:     #{vm.id}") if vm.id
+            vm.status == 'running'  ? ok("  staus:  #{vm.status}") : error("  staus:  #{vm.status}")
+            say ""
+        end
+
+        def action_vm(vm_id, selection=nil)
+            # vmRaw = @connection.get_vm(vm_id)
+            # vm = Bird::Vm.new(vmRaw)
+            error vm_id
+            vm = @curr_vm
+            showVmInfo(vm)
+            unless selection
+                alert "Actions available:"
+                choices=['power-on', 'power-off', 'reboot', 'take snapshot', 'revert snapshot', 'exit']
+                choices.delete('power-on') if vm.status == 'running'
+                choices.delete('power-off') if vm.status == 'stopped'
+                choices.delete('reboot') if vm.status == 'stopped'
+                selection = select_name(choices)
+            end
+
+            case selection
+            when 'power-off'
+                chain.poweroff_vm(vm_id)
+            when 'power-on'
+                chain.poweron_vm(vm_id)
+            when 'reboot'
+                chain.reboot_vm(vm_id)
+            when 'take snapshot'
+                chain.create_vm_snapshot(vm_id)
+            when 'revert snapshot'
+                chain.revert_vm_snapshot(vm_id)
+            when 'exit'
+                return
+            else
+                error "Please report this bug - or make a proper selection!"
+            end
+
+        end
 
     end
 end
