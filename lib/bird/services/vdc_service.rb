@@ -34,12 +34,14 @@ module Bird
       allocated_ips = []
       #vapps are only summaries at this point, need to flesh them to full objects
       if vdc
-          vdc.vapps.each{|vapp|
-            vapp = chain.get_vapp(vapp.id) if vapp.isSummary
-            allocated_ips << vapp.allocatedIps
-          }
+        vdc.vapps.each{|vapp|
+          vapp = chain.get_vapp(vapp.id) if vapp.isSummary
+          allocated_ips << vapp.allocatedIps
+        }
       end
-      allocated_ips
+      allocated_ips = allocated_ips.flatten
+      allocated_ips.reject! { |c| c == nil }
+      allocated_ips.sort!
     end
 
 
