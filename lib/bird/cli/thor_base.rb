@@ -7,28 +7,24 @@ module Bird
     include Thor::Actions
 
 
-    desc "","", :hide => true
+    protected
     def em(text)
       shell.set_color(text, nil, true)
     end
 
-    desc "","", :hide => true
     def alert(text)
       say(set_color(text, :yellow))
     end
 
-    desc "","", :hide => true
     def notice(text)
       say(set_color(text, :white, :bold))
     end
 
-    desc "","", :hide => true
     def ok(msg=nil)
       text = msg ? "#{msg}" : "OK"
       say "#{msg}\r", :green
     end
 
-    desc "","", :hide => true
     def error(msg)
       say "#{msg}\r", :red
     end

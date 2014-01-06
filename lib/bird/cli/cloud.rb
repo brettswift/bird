@@ -8,7 +8,7 @@ require 'bird/domain/vapp'
 require 'bird/domain/vm'
 require 'bird/domain/vdc'
 require 'bird/domain/vorg'
-require 'bird/services/cloud_service'
+require 'bird/services/vcloud_connection'
 require 'bird/services/vorg_service'
 require 'bird/services/vdc_service'
 require 'bird/services/vapp_service'
@@ -30,15 +30,20 @@ module Bird
 
     default_task :control
     def initialize(*args)
+        @org_name = config[:vcloud][:org]
       super
     end
 
     desc "control","does a lot of stuff for you "
     def control
 
-        org = Bird.Vorg.new.from_hash(chain.get_vorg(@org_name))
+        vorg = chain.get_vorg(@org_name)
+        
+        ok(vorg.inspect)
+        
+        # org = Bird::Vorg.new(@org_name).from_hash(vorgRaw)
 
-        puts org
+        # puts org
     # vdc_id = get_vdc_id_from_org_name(org_name)
     # vapp_id = get_vapp_id_from_vdc_id(vdc_id)
     # clear
