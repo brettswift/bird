@@ -52,8 +52,17 @@ module Bird
     desc "","", :hide => true
     def wait_for_task(taskid)
       notice "waiting for task to complete . . . "
-      self.vconnection.wait_task_completion(taskid)
-      ok "completed!"
+      task_result = self.vconnection.wait_task_completion(taskid)
+      if task_result[:errormsg]
+        task_result[:errormsg]
+        return
+      end
+      started = Time.parse(task_result[:start_time])
+      ended = Time.parse(task_result[:end_time])
+      elapsed_seconds = ended - started
+
+      say("Task completed in #{elapsed_seconds}s.")
+      ok(task_result[:status])
     end
 
   end
