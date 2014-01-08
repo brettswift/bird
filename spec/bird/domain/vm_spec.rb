@@ -29,6 +29,7 @@ describe Bird::Vm do
     vm.id.must_equal "9619dbf2-7b85-4c78-9384-07995719f920"
     vm.status.must_equal "running"
     vm.ips.size.must_equal 1
+    vm.ips[0].must_equal "10.191.101.105"
   end
 
 

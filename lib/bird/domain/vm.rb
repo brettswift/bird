@@ -32,7 +32,10 @@ module Bird
       @name = vm[:vm_name]
       @machineName = vm[:guest_customizations][:computer_name]
       @status = vm[:status]
-      @ips << vm[:networks][:ip]
+
+      vm[:networks].each { |network|
+        @ips << network[1][:ip]
+      }
       self
     end
 

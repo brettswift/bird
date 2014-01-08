@@ -76,11 +76,10 @@ module Bird
         def showVmInfo(vm)
             notice "VM information:"
             say("  name:   #{vm.name}")
-            # if vm.ips.size > 0
-            #     say("  ips:    #{vm.ips[0]}")
-            # elsif
-            #     say ""
-            # end
+             vm.ips.each {|ip|
+                say("  ip:     #{ip}")
+            } 
+
 
             say("  id:     #{vm.id}") if vm.id
             vm.status == 'running'  ? ok("  staus:  #{vm.status}") : error("  staus:  #{vm.status}")
@@ -91,8 +90,8 @@ module Bird
             run("clear")
             say(set_color(" - bird console - ", :white, :bold))
             say("  vCloud: #{@host}")
-            say("    org: #{@org_name}")
-            say("    vdc: #{@curr_vdc.name}") if @curr_vdc
+            say("     org: #{@org_name}")
+            say("     vdc: #{@curr_vdc.name}") if @curr_vdc
             say("    vapp: #{@curr_vapp.name}") if @curr_vapp
             # say("    vm: #{@curr_vm.name}") if @curr_vm
             say(" - - - - - - - - - - - - - - - - - - - -")
