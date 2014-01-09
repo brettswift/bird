@@ -1,9 +1,13 @@
 GIT
-  remote: git@github.com:developingchris/thor.git
-  revision: e917677011334e6223599ee66790cc8afce769b3
-  branch: unify_help
+  remote: git@github.com:brettswift/vcloud-rest.git
+  revision: 1a8f1ee9ac42bc898cba3a4fd75f975cc83a71c0
+  branch: vmSnapshots
   specs:
-    thor (0.18.1)
+    vcloud-rest (1.1.1)
+      httpclient (~> 2.3.3)
+      nokogiri (>= 1.5.10)
+      rest-client (~> 1.6.7)
+      ruby-progressbar (~> 1.2.0)
 
 PATH
   remote: .
@@ -74,13 +78,9 @@ GEM
     ruby-progressbar (1.2.0)
     slop (3.4.7)
     symmetric-encryption (3.2)
+    thor (0.18.1)
     timers (1.1.0)
     user_config (0.0.4)
-    vcloud-rest (1.1.1)
-      httpclient (~> 2.3.3)
-      nokogiri (>= 1.5.10)
-      rest-client (~> 1.6.7)
-      ruby-progressbar (~> 1.2.0)
 
 PLATFORMS
   ruby
@@ -96,4 +96,4 @@ DEPENDENCIES
   minitest-reporters
   rake
   rr
-  thor!
+  vcloud-rest!

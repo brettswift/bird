@@ -31,20 +31,22 @@ module Bird
         #BUG: default task control causes subcommands to fail
         # default_task :control
 
-        def initialize(*args)
-            @org_name = config[:vcloud][:org]
-            super
-        end
+        # def initialize(*args)
+        #     @org_name = config[:vcloud][:org]
+        #     super
+        # end
 
         desc "control","does a lot of stuff for you "
         def control
+            return unless validate_required_login_params
+
             load_vdc
             reset_header
             vapp_summary = select_object_from_array(@curr_vdc.vapps)
 
             @curr_vapp = chain.get_vapp(vapp_summary.id)
             reset_header
-            say @curr_vapp.allocatedIps.inspect
+            # say @curr_vapp.allocatedIps.inspect
 
             vm_summary = select_object_from_array(@curr_vapp.vms)
 
@@ -64,15 +66,46 @@ module Bird
             print_ips ips
         end
 
-        desc "restore", "shortcut for a one line command to restore a snapshot of a VM"
-        def restore
+        desc "revertvm", "shortcut for a one line command to restore a snapshot of a VM"
+        option :vhost, :required => true, :banner => "{vcloud host name}"
+        option :vorg_name, :required => true, :banner => "{vcloud organization name}"
+        option :vuser, :required => true, :banner => "{vcloud user id}"
+        option :vpass, :required => true, :banner => "{vcloud password (encrypted)}"
+        option :vmid, :required => true, :banner => "{vcloud vm id}"
+        def revertvm
+            @host = options['vhost']
+            @user = options['vuser']
+            @pass = options['vpass']
+            @org_name = options['vorg_name']
+            vmid = options['vmid']
+
+            update_config(@host,@org_name,@user,@pass)
+
             ok "restoring snapshot"
-
-
+            @curr_vm = chain.get_vm(vmid)
+            action_vm(@curr_vm.id, "revert snapshot")
         end
 
         private
 
+        def update_config(host,org_name,user,pass)
+            config[:vcloud] = {}
+            config[:vcloud][:host] = host
+            config[:vcloud][:org] = org_name
+            config[:vcloud][:user] = user
+            config[:vcloud][:pass] = pass
+            config.save
+        end
+
+        def validate_required_login_params
+            result = true
+            result = false unless @host
+            result = false unless @org_name
+            result = false unless @user
+            result = false unless @pass
+            error("Please configure bird first. See: `bird help setup`")
+            return result
+        end
 
         def print_ips(ips)
             ips.each{|ip|

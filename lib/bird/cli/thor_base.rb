@@ -6,6 +6,9 @@ module Bird
   class ThorBase < Thor
     include Thor::Actions
 
+    def self.exit_on_failure?
+      true
+    end
 
     protected
     def em(text)
@@ -46,8 +49,8 @@ module Bird
       print_table choices
       selection = ask(set_color("Pick one:",:white)).to_i
       selected_name = choices[selection]
-      objects.each do |c| 
-         return c if c.name == selected_name
+      objects.each do |c|
+        return c if c.name == selected_name
       end
       raise "Please report this error.  I should have found your object in select_id_from_object"
     end
