@@ -59,10 +59,18 @@ module Bird
             load_vdc
             @curr_vdc = chain.get_vdc(vdc_id: @curr_vdc.id)
             ips = chain.get_allocated_ips(@curr_vdc)
-            print_array ips
+            print_ips ips
         end
 
         private
+
+
+        def print_ips(ips)
+            ips.each{|ip|
+                say("#{ip.ip}  - #{ip.name}")
+            }
+        end
+
 
         def load_vdc
             unless @curr_vdc
@@ -77,9 +85,9 @@ module Bird
         def showVmInfo(vm)
             notice "VM information:"
             say("  name:   #{vm.name}")
-             vm.ips.each {|ip|
+            vm.ips.each {|ip|
                 say("  ip:     #{ip}")
-            } 
+            }
 
             say("  id:     #{vm.id}") if vm.id
             vm.status == 'running'  ? ok("  staus:  #{vm.status}") : error("  staus:  #{vm.status}")

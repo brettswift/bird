@@ -52,11 +52,5 @@ module Bird
       raise "Please report this error.  I should have found your object in select_id_from_object"
     end
 
-    def print_array(array)
-      array.each{|x|
-        say(x[0] - x[1])
-      }
-    end
-
   end
 end

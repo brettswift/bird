@@ -27,8 +27,10 @@ module Bird
       hash[:vms_hash].each { |vmHash|
         vm = Bird::Vm.new.from_app_summary(vmHash)
         @vms << vm
-        @allocatedIps << [vm.ips, vm.name]
+        @allocatedIps << vm.ips
       }
+      # @allocatedIps.flatten
+      @allocatedIps = @allocatedIps
       self
     end
 
