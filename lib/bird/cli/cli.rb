@@ -25,5 +25,13 @@ module Bird
 
     end
 
+    desc "crypt", "encrypts a password and spits it out - useful when requiring a script to call this"
+    option :val, :required => true, :banner => "value to encrypt"
+    def crypt
+        val = options['val']
+        encrypted = encrypt(val)
+        say "decrypted value:"
+        ok " #{encrypted}"
+    end
   end
 end
