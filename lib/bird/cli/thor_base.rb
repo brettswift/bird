@@ -54,7 +54,7 @@ module Bird
 
     def print_array(array)
       array.each{|x|
-        say(x)
+        say(x[0] - x[1])
       }
     end
 

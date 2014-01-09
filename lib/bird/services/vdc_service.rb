@@ -36,13 +36,16 @@ module Bird
       if vdc
         vdc.vapps.each{|vapp|
           vapp = chain.get_vapp(vapp.id) if vapp.isSummary
-          allocated_ips << vapp.allocatedIps
+          allocated_ips << vapp.allocatedIps.flatten
         }
       end
+      say allocated_ips
+      say "0-------"
       #TODO: list these with their vm name. 
-      allocated_ips = allocated_ips.flatten
-      allocated_ips.reject! { |c| c == nil }
-      allocated_ips.sort!
+      # allocated_ips = allocated_ips.flatten
+      # allocated_ips.reject! { |c| c == nil }
+      # allocated_ips.sort!
+      return allocated_ips
     end
 
 

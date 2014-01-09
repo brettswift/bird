@@ -1,3 +1,4 @@
+require 'bird/domain/ip'
 
 module Bird
   class Vm
@@ -19,9 +20,9 @@ module Bird
       vmInfo = array[1]
       @id = vmInfo[:id]
       @status = vmInfo[:status]
-
       vmInfo[:addresses].each { |ip|
-        @ips << ip
+        newIp = Bird::Ip.new(ip,@name)
+        @ips << newIp
       }
       self
     end

@@ -42,6 +42,7 @@ module Bird
 
             @curr_vapp = chain.get_vapp(vapp_summary.id)
             reset_header
+            say @curr_vapp.allocatedIps.inspect
 
             vm_summary = select_object_from_array(@curr_vapp.vms)
 
@@ -79,7 +80,6 @@ module Bird
              vm.ips.each {|ip|
                 say("  ip:     #{ip}")
             } 
-
 
             say("  id:     #{vm.id}") if vm.id
             vm.status == 'running'  ? ok("  staus:  #{vm.status}") : error("  staus:  #{vm.status}")

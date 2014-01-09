@@ -1,5 +1,6 @@
 require 'minitest/autorun'
 require 'bird/domain/vapp'
+require 'bird/domain/ip'
 
 
 describe Bird::Vapp do
@@ -15,7 +16,9 @@ describe Bird::Vapp do
     vapp.vms.size.must_equal 3
     vapp.snapshotDate.must_equal "2014-01-02T16:52:16.227-07:00"
 
-    vapp.vms[0].ips.must_include "10.191.101.118"
+
+    vapp.vms[0].ips[0].ip.must_equal "10.191.101.118"
+    vapp.vms[0].ips[0].must_be_instance_of Bird::Ip
     vapp.vms[0].name.must_equal "devprovepzl101 - Mykola deploy test"
     # vapp.vms[0].machineName.must_equal "devprovepzl101"
 
