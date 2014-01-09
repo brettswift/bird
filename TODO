@@ -1,15 +1,15 @@
 + ---------------------------------------------------------------------------- +
-| TODOS @ Monday 06 January 2014 15:57                                         |
-| 37 files scanned                                                             |
+| TODOS @ Thursday 09 January 2014 16:45                                       |
+| 38 files scanned                                                             |
 + ---------------------------------------------------------------------------- +
 
 ## TODO (9)
-1. cloud.rb:19  move to config module?
-2. vcloud_connection.rb:55  handle in cli:   error("Login failed.")
-3. vcloud_connection.rb:56  handle in cli:   alert("To update password run:  `bird setup --vpass <password>`")
-4. vcloud_connection.rb:58  handle in cli:   clear
+1. cli.rb:12  move to config module?
+2. cloud.rb:19  move to config module?
+3. cloud.rb:105  implement `bird help setup`
+4. thor_base.rb:36  make selection return if only one option exists
 5. cloud_service.rb:29  return array of organizations
 6. cloud_service.rb:64  refactor to DDD and model objects, separate repository.
-7. vdc_service.rb:42  list these with their vm name. 
-8. cli.rb:12  move to config module?
-9. thor_base.rb:33  make selection return if only one option exists
+7. vcloud_connection.rb:55  handle in cli:   error("Login failed.")
+8. vcloud_connection.rb:56  handle in cli:   alert("To update password run:  `bird setup --vpass <password>`")
+9. vcloud_connection.rb:58  handle in cli:   clear

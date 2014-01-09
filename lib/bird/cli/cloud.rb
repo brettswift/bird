@@ -46,7 +46,6 @@ module Bird
 
             @curr_vapp = chain.get_vapp(vapp_summary.id)
             reset_header
-            # say @curr_vapp.allocatedIps.inspect
 
             vm_summary = select_object_from_array(@curr_vapp.vms)
 
@@ -103,6 +102,7 @@ module Bird
             result = false unless @org_name
             result = false unless @user
             result = false unless @pass
+            #TODO: implement `bird help setup`
             error("Please configure bird first. See: `bird help setup`")
             return result
         end
