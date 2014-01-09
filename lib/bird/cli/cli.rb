@@ -13,7 +13,7 @@ module Bird
     register(Bird::Cloud, :cloud, "cloud", "interactive cloud control")
     register(Bird::Puppet, :puppet, "puppet", "kick puppet")
 
-    desc "test", "tests some stuff"
+    desc "test", "tests some stuff", :hide => true
     # option :vhost, :required => true, :banner => " vcloud host"
     def test
       Bird.dostuff
@@ -23,17 +23,6 @@ module Bird
     desc "conf", "stores config, interactively if no options sent"
     def conf
 
-    end
-
-    desc "ips","here becuase subcommands don't work"
-    def ips
-        Bird::Cloud.new.ips
-    end
-
-
-    desc "cloud","here becuase subcommands don't work"
-    def cloud
-        Bird::Cloud.new.control
     end
 
   end

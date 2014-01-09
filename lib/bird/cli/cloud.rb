@@ -28,7 +28,9 @@ module Bird
         attr_accessor :curr_vm
 
 
-        default_task :control
+        #BUG: default task control causes subcommands to fail
+        # default_task :control
+
         def initialize(*args)
             @org_name = config[:vcloud][:org]
             super
@@ -60,6 +62,13 @@ module Bird
             @curr_vdc = chain.get_vdc(vdc_id: @curr_vdc.id)
             ips = chain.get_allocated_ips(@curr_vdc)
             print_ips ips
+        end
+
+        desc "restore", "shortcut for a one line command to restore a snapshot of a VM"
+        def restore
+            ok "restoring snapshot"
+
+
         end
 
         private
