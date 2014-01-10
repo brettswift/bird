@@ -38,7 +38,7 @@ module Bird
 
         desc "control","does a lot of stuff for you "
         def control
-            return unless validate_required_login_params
+            validate_required_login_params
 
             load_vdc
             reset_header
@@ -59,12 +59,15 @@ module Bird
 
         desc "ips","list ips of machines that have been allocated"
         def ips
+            validate_required_login_params
             load_vdc
             @curr_vdc = chain.get_vdc(vdc_id: @curr_vdc.id)
             ips = chain.get_allocated_ips(@curr_vdc)
             print_ips ips
         end
 
+        ##TODO: move to 'console' command?
+        #  ie a location where local config is expected to be skipped?
         desc "revertvm", "shortcut for a one line command to restore a snapshot of a VM"
         option :vhost, :required => true, :banner => "{vcloud host name}"
         option :vorg_name, :required => true, :banner => "{vcloud organization name}"
@@ -102,19 +105,22 @@ module Bird
             if config[:vcloud]
                 @host = config[:vcloud][:host] if config[:vcloud][:host]
                 result = false unless @host
-                
+
                 @org_name ||= config[:vcloud][:org] if config[:vcloud][:org]
                 result = false unless @org_name
-                
+
                 @user ||= config[:vcloud][:user] if config[:vcloud][:user]
                 result = false unless @user
-                
+
                 @pass ||= config[:vcloud][:pass] if config[:vcloud][:pass]
                 result = false unless @pass
             end
             #TODO: implement `bird help setup`
-            error("Please configure bird first. See: `bird help setup`") unless result
-            return result
+            unless result
+                error("Please configure bird first. See: `bird help setup`")
+                raise "Can not proceed.  Configuration setup is required"
+            end
+            result
         end
 
         def print_ips(ips)
