@@ -57,7 +57,7 @@ module Bird
         end
 
 
-        desc "ips","list ips of machines that have been allocated", :hide => true
+        desc "ips","list ips of machines that have been allocated"
         def ips
             load_vdc
             @curr_vdc = chain.get_vdc(vdc_id: @curr_vdc.id)
@@ -98,12 +98,22 @@ module Bird
 
         def validate_required_login_params
             result = true
-            result = false unless @host
-            result = false unless @org_name
-            result = false unless @user
-            result = false unless @pass
+            result = false unless config[:vcloud]
+            if config[:vcloud]
+                @host = config[:vcloud][:host] if config[:vcloud][:host]
+                result = false unless @host
+                
+                @org_name ||= config[:vcloud][:org] if config[:vcloud][:org]
+                result = false unless @org_name
+                
+                @user ||= config[:vcloud][:user] if config[:vcloud][:user]
+                result = false unless @user
+                
+                @pass ||= config[:vcloud][:pass] if config[:vcloud][:pass]
+                result = false unless @pass
+            end
             #TODO: implement `bird help setup`
-            error("Please configure bird first. See: `bird help setup`")
+            error("Please configure bird first. See: `bird help setup`") unless result
             return result
         end
 
