@@ -16,26 +16,26 @@ desc "continuous testing"
 task "runBird"  do
   sh %Q{clear}
 
-  puts "\nbird test".white
-  sh %Q{bundle exec ./bin/bird cloud ips} do |ok, res|
-    if ! ok
-      puts "failed to run bird cloud ips"
-    end
-  end
+  # puts "\nbird test".white
+  # sh %Q{bundle exec ./bin/bird cloud ips} do |ok, res|
+  #   if ! ok
+  #     puts "failed to run bird cloud ips"
+  #   end
+  # end
 
-  puts "\nbird help".white
-  sh %Q{bundle exec ./bin/bird help} do |ok, res|
-    if ! ok
-      puts "failed to run bird help"
-    end
-  end
+  # puts "\nbird help".white
+  # sh %Q{bundle exec ./bin/bird help} do |ok, res|
+  #   if ! ok
+  #     puts "failed to run bird help"
+  #   end
+  # end
 
-  puts "\nbird help cloud".white
-  sh %Q{bundle exec ./bin/bird help cloud} do |ok, res|
-    if ! ok
-      puts "failed to run bird help cloud"
-    end
-  end
+  # puts "\nbird help cloud".white
+  # sh %Q{bundle exec ./bin/bird help cloud} do |ok, res|
+  #   if ! ok
+  #     puts "failed to run bird help cloud"
+  #   end
+  # end
 
   # sh "'\e[1;37m doing shit \e[0m'" do |ok,res| end
   puts "\ntests".white

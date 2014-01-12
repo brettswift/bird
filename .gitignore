@@ -51,4 +51,7 @@ pickle-email-*.html
 .Spotlight-V100
 .Trashes
 
+###Intellij###
+.idea
+
 

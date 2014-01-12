@@ -5,7 +5,8 @@ require 'rr'
 require 'fakefs/safe'
 require 'user_config'
 
-Minitest::Reporters.use!
+Minitest::Reporters.use!  [Minitest::Reporters::SpecReporter.new]
+# Minitest::Reporters.use!  Minitest::Reporters::ProgressReporter.new
 
 def file_content(file)
   File.read(File.expand_path("files/"+file, File.dirname(__FILE__)))
