@@ -54,12 +54,12 @@ module Bird
 				@config[:vcloud] = {}
 				@config.save
 			end
-			@host ||= @config[:vcloud][:host] if @config[:vcloud][:host]
-			@org_name ||= @config[:vcloud][:org_name] if @config[:vcloud][:org_name]
-			@user ||= @config[:vcloud][:user] if @config[:vcloud][:user]
-			@pass_encrypted ||= @config[:vcloud][:pass_encrypted] if @config[:vcloud][:pass_encrypted]
-			@curr_vapp_id ||= @config[:vcloud][:curr_vapp_id] if @config[:vcloud][:curr_vapp_id]
-			@curr_vapp_id ||= @config[:vcloud][:curr_vm_id] if @config[:vcloud][:curr_vm_id]
+			@host ||= @config[:vcloud][:host]
+			@org_name ||= @config[:vcloud][:org_name]
+			@user ||= @config[:vcloud][:user]
+			@pass_encrypted ||= @config[:vcloud][:pass_encrypted] 
+			@curr_vapp_id ||= @config[:vcloud][:curr_vapp_id] 
+			@curr_vapp_id ||= @config[:vcloud][:curr_vm_id]
 		end
 
 
