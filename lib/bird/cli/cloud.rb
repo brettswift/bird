@@ -1,6 +1,6 @@
 require 'thor'
 require 'thor/actions'
-require 'user_config'
+require 'user_config' #TODO: remove this dependency from this class
 require 'vcloud-rest/connection'
 require 'bird'
 require 'bird/cli/thor_base'
