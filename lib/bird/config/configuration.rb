@@ -26,7 +26,7 @@ module Bird
 		end
  
 		def save
-			# raise(Exception, "Save operation not permitted in console mode.") if isConsoleMode
+			raise(Exception, "Save operation not permitted in console mode.") if isConsoleMode
 			@config[:vcloud][:host] = @host if @host
 			@config[:vcloud][:org_name] = @org_name if @org_name
 			@config[:vcloud][:user] = @user if @user

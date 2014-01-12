@@ -81,6 +81,14 @@ describe Bird::Configuration do
             @conf.has_minimal_configuration?.must_equal false
         end
 
+        it "should throw exception on save when in console mode " do 
+            @conf = Bird::Configuration.new(true)
+            @conf.has_minimal_configuration?.must_equal false
+            err = proc { @conf.save }.must_raise Exception
+            err.message.must_match(/not permitted/i)
+        end
+
+        
 
         
 
