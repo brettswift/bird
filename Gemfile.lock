@@ -9,6 +9,12 @@ GIT
       rest-client (~> 1.6.7)
       ruby-progressbar (~> 1.2.0)
 
+GIT
+  remote: git@github.com:erikhuda/thor.git
+  revision: d9d26adcd3ee0d5af04e41bcd6db0ea64c11766f
+  specs:
+    thor (0.18.1)
+
 PATH
   remote: .
   specs:
@@ -78,7 +84,6 @@ GEM
     ruby-progressbar (1.2.0)
     slop (3.4.7)
     symmetric-encryption (3.2)
-    thor (0.18.1)
     timers (1.1.0)
     user_config (0.0.4)
 
@@ -96,4 +101,5 @@ DEPENDENCIES
   minitest-reporters
   rake
   rr
+  thor!
   vcloud-rest!
