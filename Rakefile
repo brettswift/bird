@@ -37,7 +37,11 @@ task "runBird"  do
   #   end
   # end
 
-  # sh "'\e[1;37m doing shit \e[0m'" do |ok,res| end
+  puts "\n bird setup:".white
+  sh %Q{./bird setup} 
+  puts "\n bird setup override --vorg test_org_name --host vcloud.host.name --user  test_user --pass  azBHehbD2EibMuxGZPqIVQ==".white
+  sh %Q{./bird setup override --org_name test_org_name --host vcloud.host.name --user  test_user --pass  donkeyPass} 
+
   puts "\ntests".white
   sh %Q{bundle exec rake test} do |ok, res|
     if ! ok

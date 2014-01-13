@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Brett Swift"]
   s.email       = ["brettswift@gmail.com"]
   s.homepage    = "http://brettswift.github.com/bird/"
-  s.summary     = %q{Control vCloud and Puppet Deployments}
-  s.description = %q{Provision a VM, and kick puppet!}
+  s.summary     = %q{Control vCloud Deployments}
+  s.description = %q{Provision a VM, and control it!}
   s.license     = "MIT"
 
   # s.rubyforge_project = "bird"

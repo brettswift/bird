@@ -29,6 +29,7 @@ module Bird
     @next.__send__(method, *args, &block)
   end
 
+  #sample method to show how easy it could be to control a workflow
   def self.dostuff
     chain.vm_power_on
     chain.vdc_list_vapps

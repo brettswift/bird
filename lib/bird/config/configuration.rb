@@ -25,12 +25,17 @@ module Bird
 			@pass_encrypted = encrypt(password)
 		end
  
+		def pass_encrypted=(password)
+			@pass_encrypted = password
+		end
+ 
 		def save
 			raise(Exception, "Save operation not permitted in console mode.") if isConsoleMode
+			encryptedPass = @pass_encrypted || encrypt(@pass)
 			@config[:vcloud][:host] = @host if @host
 			@config[:vcloud][:org_name] = @org_name if @org_name
 			@config[:vcloud][:user] = @user if @user
-			@config[:vcloud][:pass_encrypted] = @pass if @pass_encrypted
+			@config[:vcloud][:pass_encrypted] = encryptedPass
 			@config[:vcloud][:curr_vapp_id] = @curr_vapp_id if @curr_vapp_id
 			@config[:vcloud][:curr_vm_id] = @curr_vm_id if @curr_vm_id
 			@config.save

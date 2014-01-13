@@ -5,7 +5,7 @@ Status:  unreleased.  in the midst of a refactor, and in development to regain f
 
 # bird
 
-I am a command line tool to interact with VMWare vCloud Director API and to kick the Puppetlabs Puppet agent. 
+I am a command line tool to interact with VMWare vCloud Director API.
 
 I am intended for development and to facilitate CI and CD workflows.  
 
