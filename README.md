@@ -1,4 +1,5 @@
 [![Code Climate](https://codeclimate.com/github/brettswift/bird.png)](https://codeclimate.com/github/brettswift/bird)
+[![Dependency Status](https://gemnasium.com/brettswift/bird.svg)](https://gemnasium.com/brettswift/bird)
 
 Status:  unreleased.  in the midst of a refactor, and in development to regain from before refactor. 
 
