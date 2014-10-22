@@ -1,4 +1,3 @@
-require 'user_config'
 require 'vcloud-rest/connection'
 require 'bird/cli/thor_base'
 
@@ -27,15 +26,7 @@ module Bird
     end
 
     private
-
-    def load_config
-      @host ||= expect_param_from_config(config[:vcloud][:host], "vhost")
-      @user ||= expect_param_from_config(config[:vcloud][:user], "vuser")
-      @org_name ||= expect_param_from_config(config[:vcloud][:org], "vorg")
-      @pass ||= decrypt(expect_param_from_config(config[:vcloud][:pass], "vpass"))
-      @api = "1.5"
-    end
-
+ 
     def expect_param_from_config(config_value, cli_param_name)
       warning_string = "config value: '%s' not set.  Supply with:  `bird setup %s {value}`."
       unless config_value
@@ -47,9 +38,8 @@ module Bird
     end
 
     def login
-      load_config
 
-      @connection ||= VCloudClient::Connection.new("https://#{@host}", @user, @pass, @org_name, @api)
+      @connection ||= VCloudClient::Connection.new("https://#{config.host}", config.user, config.pass, config.org_name, @api)
       @connection.login
 
       # TODO: handle in cli:   error("Login failed.")

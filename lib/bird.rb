@@ -1,6 +1,5 @@
 require "bird/version"
 require "bird/cli/cli"
-require 'user_config'
 require 'bird/services/vm_service'
 require 'bird/services/vapp_service'
 require 'bird/services/vdc_service'
@@ -14,7 +13,7 @@ module Bird
   end
 
   def self.config
-    @config ||= UserConfig.new('.bird')['conf.yaml']
+    @config = Bird::Configuration.new
   end
 
   def next_in_chain(link)

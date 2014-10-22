@@ -1,6 +1,5 @@
 require 'thor'
 require 'thor/actions'
-require 'user_config' #TODO: remove this dependency from this class
 require 'vcloud-rest/connection'
 require 'bird'
 require 'bird/cli/thor_base'
@@ -18,11 +17,6 @@ module Bird
     class Cloud < ThorBase
         include Bird #includes global config.  todo: move to config module?
 
-        attr_accessor :host
-        attr_accessor :org_name
-        attr_accessor :user
-        attr_accessor :pass
-
         attr_accessor :curr_vdc
         attr_accessor :curr_vapp
         attr_accessor :curr_vm
@@ -30,11 +24,6 @@ module Bird
 
         #BUG: default task control causes subcommands to fail
         # default_task :control
-
-        # def initialize(*args)
-        #     @org_name = config[:vcloud][:org]
-        #     super
-        # end
 
         desc "control","does a lot of stuff for you "
         def control
@@ -75,13 +64,12 @@ module Bird
         option :vpass, :required => true, :banner => "{vcloud password (encrypted)}"
         option :vmid, :required => true, :banner => "{vcloud vm id}"
         def revertvm
-            @host = options['vhost']
-            @user = options['vuser']
-            @pass = options['vpass']
-            @org_name = options['vorg_name']
+            config.isConsoleMode = true
+            config.host = options['vhost']
+            config.user = options['vuser']
+            config.pass = options['vpass']
+            config.org_name = options['vorg_name']
             vmid = options['vmid']
-
-            update_config(@host,@org_name,@user,@pass)
 
             ok "restoring snapshot"
             @curr_vm = chain.get_vm(vmid)
@@ -90,32 +78,26 @@ module Bird
 
         private
 
-        def update_config(host,org_name,user,pass)
-            config[:vcloud] = {}
-            config[:vcloud][:host] = host
-            config[:vcloud][:org] = org_name
-            config[:vcloud][:user] = user
-            config[:vcloud][:pass] = pass
-            config.save
-        end
-
         def validate_required_login_params
             result = true
-            result = false unless config[:vcloud]
-            if config[:vcloud]
-                @host = config[:vcloud][:host]
-                result = false unless @host
 
-                @org_name ||= config[:vcloud][:org]
-                result = false unless @org_name
-
-                @user ||= config[:vcloud][:user]
-                result = false unless @user
-
-                @pass ||= config[:vcloud][:pass]
-                result = false unless @pass
+            unless config.host
+                result = false
+                error("host name configuration required")
             end
-            #TODO: implement `bird help setup`
+            unless config.org_name
+                result = false
+                error("organization name configuration required")
+            end
+            unless config.user
+                result = false
+                error("user name configuration required")
+            end
+            unless config.pass
+                result = false
+                error("password configuration required")
+            end
+            
             unless result
                 error("Please configure bird first. See: `bird help setup`")
                 raise "Can not proceed.  Configuration setup is required"
@@ -132,7 +114,7 @@ module Bird
 
         def load_vdc
             unless @curr_vdc
-                vorg = chain.get_vorg(@org_name)
+                vorg = chain.get_vorg(config.org_name)
                 if vorg.vdcs.size == 1
                     @curr_vdc = vorg.vdcs[0]
                 end
@@ -155,8 +137,8 @@ module Bird
         def reset_header
             run("clear")
             say(set_color(" - bird console - ", :white, :bold))
-            say("  vCloud: #{@host}")
-            say("     org: #{@org_name}")
+            say("  vCloud: #{config.host}")
+            say("     org: #{config.org_name}")
             say("     vdc: #{@curr_vdc.name}") if @curr_vdc
             say("    vapp: #{@curr_vapp.name}") if @curr_vapp
             # say("    vm: #{@curr_vm.name}") if @curr_vm

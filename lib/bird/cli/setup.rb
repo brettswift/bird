@@ -46,7 +46,7 @@ module Bird
       end
 
       pass = ask("Enter your password: ", :echo => false)
-      if pass != 0
+      if pass != ""
         config.pass = pass
       end
 
@@ -55,6 +55,16 @@ module Bird
       notice("\r\nSetup complete.\r\n")
 
     end
+
+    desc "show", "shows current configuration"
+    def show
+      notice("Configuration:")
+      say "Hostname:            #{config.host}"
+      say "Organization:        #{config.org_name}"
+      say "User:                #{config.user}"
+      say "Encrypted Password:  #{config.passEncrypted}"
+    end
+
 
   end
 end
